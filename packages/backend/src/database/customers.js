@@ -1,0 +1,33 @@
+module.exports = {
+  data: [
+    {
+      company: 'Company A',
+      last_name: 'Bedecs',
+      first_name: 'Anna',
+      job_title: 'Owner',
+      email_address: 'bedecs@gmail.com',
+      business_phone: '(123)555-0100',
+      fax_number: '(123)555-0101',
+      address: '123 1st Street',
+      city: 'Seattle',
+      state_province: 'WA',
+      zip_postal_code: '99999',
+      country_region: 'USA',
+      attachments: '',
+    }, {
+      company: 'Company B',
+      last_name: 'Gratacos Solsona',
+      first_name: 'Antonio',
+      job_title: 'Owner',
+      email_address: 'gratacossolsona@gmail.com',
+      business_phone: '(123)555-0230',
+      fax_number: '(123)555-0110',
+      address: '123 2st Street',
+      city: 'Boston',
+      state_province: 'MA',
+      zip_postal_code: '99999',
+      country_region: 'USA',
+      attachments: '',
+    },
+  ],
+};

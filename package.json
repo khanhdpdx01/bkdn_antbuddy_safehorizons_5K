@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-antbuddy",
+  "version": "1.0.0",
+  "description": "simple API e-commerce",
+  "main": "index.js",
+  "scripts": {
+    "serve:backend": "npm workspace @app/backend dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khanhdpdx01/bkdn_antbuddy_safehorizons_XT_K19.git"
+  },
+  "keywords": [
+    "API E-commerce"
+  ],
+  "author": "LE-VAN-KET",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "bugs": {
+    "url": "https://github.com/khanhdpdx01/bkdn_antbuddy_safehorizons_XT_K19/issues"
+  },
+  "homepage": "https://github.com/khanhdpdx01/bkdn_antbuddy_safehorizons_XT_K19#readme"
+}

@@ -1,0 +1,46 @@
+{
+  "name": "bkdn-antbuddy-safehorizons-xt-k19",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./src/bin/www",
+    "server": "babel-node ./src/bin/www",
+    "dev": "nodemon --exec babel-node ./src/bin/www",
+    "build": "babel ./src --out-dir dist --copy-files",
+    "lint": "eslint --fix --ext .js",
+    "migrate:make": "knex migrate:make --knexfile src/config/knexfile.js",
+    "migrate:latest": "knex migrate:latest --knexfile src/config/knexfile.js",
+    "migrate:rollback": "knex migrate:rollback --knexfile src/config/knexfile.js",
+    "seed:make": "knex seed:make --knexfile src/config/knexfile.js",
+    "seed:run": "knex seed:run --knexfile src/config/knexfile.js",
+    "db:reset": "npm run migrate:rollback && yarn migrate:latest && yarn seed:run"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "dotenv": "^10.0.0",
+    "express": "~4.16.1",
+    "express-rate-limit": "^6.0.1",
+    "express-validator": "^6.14.0",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.14",
+    "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
+    "path": "^0.12.7",
+    "swagger-ui-express": "^4.3.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.5",
+    "@babel/node": "^7.12.1",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.16.5",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.6"
+  }
+}
