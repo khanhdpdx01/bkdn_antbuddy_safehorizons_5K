@@ -1,9 +1,8 @@
 exports.up = (knex) => knex.schema.createTable('customers', (table) => {
-  table.increments('id').primary();
+  table.increments('customer_id').primary();
   table.string('company', 50);
   table.string('last_name', 50).notNullable();
   table.string('first_name', 50).notNullable();
-  table.string('email_address', 50).unique().notNullable();
   table.string('job_title', 50);
   table.string('business_phone', 25).unique();
   table.string('home_phone', 25).unique();
@@ -17,6 +16,9 @@ exports.up = (knex) => knex.schema.createTable('customers', (table) => {
   table.longText('web_page');
   table.longText('notes');
   table.specificType('attachments', 'LONGBLOB');
+  table.integer('account_id').unique().unsigned().notNullable()
+        .references('account_id')
+        .inTable('accounts');
   table.timestamp('created_at').defaultTo(knex.fn.now());
   table.timestamp('updated_at').defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
   // table.uuid('id').primary();

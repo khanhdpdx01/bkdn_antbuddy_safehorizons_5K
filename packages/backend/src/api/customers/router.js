@@ -19,7 +19,7 @@ export default routerGroup({
     }, {
         method: 'POST',
         path: '/',
-        handlers: [ValidationHelper.isEmail('email_address', true), customersController.callMethod('createCustomer')],
+        handlers: [customersController.callMethod('createCustomer')],
     }, {
         method: 'PUT',
         path: '/:customerId',
@@ -30,7 +30,7 @@ export default routerGroup({
         handlers: [customersController.callMethod('deleteOneCustomer')],
     },
 ]);
-
+// ValidationHelper.isEmail('email_address', true), 
 /**
  * @swagger
  * tags:

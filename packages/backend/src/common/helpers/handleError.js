@@ -8,11 +8,11 @@ const handleError = (err, res) => {
         });
     }
 
-    // Database exception
-    return res.status(500).json({
-        message: UNEXPECTED_EXCEPTION,
-        statusCode: err.statusCode || 500,
-    });
+    // // Database exception
+    // return res.status(500).json({
+    //     message: UNEXPECTED_EXCEPTION,
+    //     statusCode: err.statusCode || 500,
+    // });
 };
 
 module.exports = {
