@@ -30,7 +30,7 @@ export default routerGroup({
         handlers: [customersController.callMethod('deleteOneCustomer')],
     },
 ]);
-// ValidationHelper.isEmail('email_address', true), 
+// ValidationHelper.isEmail('email_address', true),
 /**
  * @swagger
  * tags:

@@ -41,8 +41,7 @@ class BaseRepository {
   }
 
   getByOrCondition(clauses = [], columns = ['*']) {
-    const orClauses = clauses.splice(0, 1);
-    return this.cloneQuery().where(clauses[0]).orwhere(orClauses).select(columns)
+    return this.cloneQuery().where(clauses[0]).orwhere(clauses.splice(0, 1)).select(columns)
       .first();
   }
 

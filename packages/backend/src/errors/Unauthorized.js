@@ -1,4 +1,4 @@
-import CustomApiError from './CustomApiError';
+const CustomApiError = require('./CustomApiError');
 
 class Unauthorized extends CustomApiError {
     constructor(message) {
@@ -7,4 +7,4 @@ class Unauthorized extends CustomApiError {
     }
 }
 
-export default Unauthorized;
+module.exports = Unauthorized;
