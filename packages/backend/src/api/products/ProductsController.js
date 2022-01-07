@@ -4,7 +4,7 @@ import {
     NotFoundError,
 } from '../../errors/index';
 import {
-    CUSTOMER_NOT_FOUND,
+    PRODUCT_NOT_FOUND,
 } from '../../constants/HttpMessage';
 
 class ProductController extends BaseController {
@@ -32,9 +32,9 @@ class ProductController extends BaseController {
 
     async getProduct(req, res, next) {
         try {
-            const product = await this.productService.getBy({ id: req.params.productId });
+            const product = await this.productService.findOneByProductId(req.params.productId);
             if (!product) {
-                throw new NotFoundError(CUSTOMER_NOT_FOUND);
+                throw new NotFoundError(PRODUCT_NOT_FOUND);
             }
 
             return res.status(200).json({ product });
@@ -55,35 +55,16 @@ class ProductController extends BaseController {
     async updateProduct(req, res, next) {
         try {
             const { productId } = req.params;
-            const product = await this.productService.findOneByCustomerId(productId);
-            if (product) {
-                throw new NotFoundError(CUSTOMER_NOT_FOUND);
+            const product = await this.productService.findOneByProductId(productId);
+            if (!product) {
+                throw new NotFoundError(PRODUCT_NOT_FOUND);
             }
 
             const productUpdate = await this.productService.updateProduct(
-                productId,
-                {
-                    company: req.body.company,
-                    last_name: req.body.last_name,
-                    first_name: req.body.first_name,
-                    email_address: req.body.email_address,
-                    job_title: req.body.job_title,
-                    business_phone: req.body.business_phone,
-                    home_phone: req.body.home_phone,
-                    mobile_phone: req.body.mobile_phone,
-                    fax_number: req.body.fax_number,
-                    address: req.body.address,
-                    city: req.body.city,
-                    state_province: req.body.state_province,
-                    zip_postal_code: req.body.zip_postal_code,
-                    country_region: req.body.country_region,
-                    web_page: req.body.web_page,
-                    notes: req.body.notes,
-                    attachments: req.body.attachments,
-                },
+                productId, req.body
             );
 
-            return res.status(200).json({ updateProduct });
+            return res.status(200).json({ productUpdate });
         } catch (err) {
             next(err);
         }
@@ -99,7 +80,7 @@ class ProductController extends BaseController {
                 });
             }
 
-            throw new NotFoundError(CUSTOMER_NOT_FOUND);
+            throw new NotFoundError(PRODUCT_NOT_FOUND);
         } catch (err) {
             next(err);
         }

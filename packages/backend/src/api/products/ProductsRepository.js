@@ -16,12 +16,12 @@ class ProductsRepository extends BaseRepository {
         return this.listByPagingAndSort(pagingAndSort);
     }
 
-    findByProductsId(customerId) {
-        return this.getBy({ id: customerId });
+    findByProductsId(productId) {
+        return this.getBy({ id: productId });
     }
 
     deleteOne(productId) {
-        return this.delete({ id: productId });
+        return this.delete({ product_id: productId });
     }
 }
 

@@ -36,14 +36,14 @@ class ProductsService {
     }
 
     async findOneByProductId(productId) {
-        const product = await this.productRepository.getBy({ id: productId });
+        const product = await this.productRepository.getBy({ product_id: productId });
         return product;
     }
 
     async updateProduct(productId, productBody) {
         const customerUpdate = await this.productRepository.update(
-            { id: productId },
-            { productBody },
+            { product_id: productId },
+            productBody,
         );
         return customerUpdate;
     }
