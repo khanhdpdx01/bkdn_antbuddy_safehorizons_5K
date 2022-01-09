@@ -1,11 +1,7 @@
 import BaseController from '../../infrastructure/Controllers/BaseController';
 import Service from './CustomersService';
-import {
-    NotFoundError,
-} from '../../errors/index';
-import {
-    CUSTOMER_NOT_FOUND,
-} from '../../constants/HttpMessage';
+import { NotFoundError } from '../../errors/index';
+import { CUSTOMER_NOT_FOUND } from '../../constants/HttpMessage';
 
 class CustomersController extends BaseController {
     constructor() {
@@ -32,7 +28,8 @@ class CustomersController extends BaseController {
 
     async getCustomer(req, res, next) {
         try {
-            const customer = await this.customerService.getBy({ id: req.params.customerId });
+            const customer = await this.customerService
+                .findOneByCustomerId(req.params.customerId);
             if (!customer) {
                 throw new NotFoundError(CUSTOMER_NOT_FOUND);
             }
@@ -54,9 +51,9 @@ class CustomersController extends BaseController {
 
     async updateCustomer(req, res, next) {
         try {
-            const { customerId } = req.params.customerId;
+            const { customerId } = req.params;
             const customer = await this.customerService.findOneByCustomerId(customerId);
-            if (customer) {
+            if (!customer) {
                 throw new NotFoundError(CUSTOMER_NOT_FOUND);
             }
 
@@ -94,7 +91,7 @@ class CustomersController extends BaseController {
             const result = await this.customerService.deleteOne(req.params.customerId);
             if (result) {
                 return res.status(200).json({
-                    statusCOde: 200,
+                    statusCode: 200,
                     message: 'Delete customer successfully completed',
                 });
             }

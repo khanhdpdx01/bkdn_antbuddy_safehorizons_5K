@@ -28,6 +28,10 @@ class BaseRepository {
       .innerJoin(joinTableName, `${this.getTableName()}.${primaryKey}`, `${joinTableName}.${foreignKey}`);
   }
 
+  listInBy(column, array, columns = ['*']) {
+    return this.cloneQuery().whereIn(column, array).select(columns);
+  }
+
   count() {
     return this.cloneQuery().count({ count: '*' });
   }
@@ -41,8 +45,7 @@ class BaseRepository {
   }
 
   getByOrCondition(clauses = [], columns = ['*']) {
-    const orClauses = clauses.splice(0, 1);
-    return this.cloneQuery().where(clauses[0]).orwhere(orClauses).select(columns)
+    return this.cloneQuery().where(clauses[0]).orwhere(clauses.splice(0, 1)).select(columns)
       .first();
   }
 

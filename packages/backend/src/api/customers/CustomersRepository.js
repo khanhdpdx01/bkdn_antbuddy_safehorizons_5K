@@ -17,11 +17,7 @@ class CustomersRepository extends BaseRepository {
     }
 
     findByCustomerId(customerId) {
-        return this.getBy({ id: customerId });
-    }
-
-    findByEmail(email) {
-        return this.getBy({ email_address: email });
+        return this.getBy({ customer_id: customerId });
     }
 
     findByMobilePhone(phone) {
@@ -36,7 +32,7 @@ class CustomersRepository extends BaseRepository {
     }
 
     deleteOne(customerId) {
-        return this.delete({ id: customerId });
+        return this.delete({ customer_id: customerId });
     }
 }
 

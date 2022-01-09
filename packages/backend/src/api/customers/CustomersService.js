@@ -36,12 +36,12 @@ class CustomersService {
     }
 
     async findOneByCustomerId(customerId) {
-        const customer = await this.customerRepository.getBy({ id: customerId });
+        const customer = await this.customerRepository.findByCustomerId(customerId);
         return customer;
     }
 
-    async findOneByEmail(email) {
-        const customer = await this.customerRepository.findByEmail(email);
+    async findOneByAccountId(accountId) {
+        const customer = await this.customerRepository.getBy({account_id: accountId});
         return customer;
     }
 
@@ -52,8 +52,8 @@ class CustomersService {
 
     async updateCustomer(customerId, customerBody) {
         const customerUpdate = await this.customerRepository.update(
-            { id: customerId },
-            { customerBody },
+            { customer_id: customerId },
+            { ...customerBody },
         );
         return customerUpdate;
     }

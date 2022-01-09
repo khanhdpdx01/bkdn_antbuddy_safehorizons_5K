@@ -27,6 +27,7 @@ class ProductController extends BaseController {
         const products = await this.productService.getAllProducts({
             sortBy, limit, page,
         });
+
         return res.status(200).json({ products });
     }
 

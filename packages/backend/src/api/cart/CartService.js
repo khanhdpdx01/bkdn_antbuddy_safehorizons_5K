@@ -14,9 +14,11 @@ class CartService {
     }
 
     async addNewCart(cart) {
-        const newCart = await this.cartRepository.create(cart);
+        let newCart = await this.cartRepository.create(cart);
+        newCart = await this.findOneByCartId(newCart[0]);
         return newCart;
     }
+
 
     async getAllCart(options) {
         const pagingAndSort = paginate(options);
@@ -51,6 +53,20 @@ class CartService {
     async deleteOne(cartId) {
         const result = await this.cartRepository.deleteOne(cartId);
         return result;
+    }
+
+    async findCartBySessionIdOrCustomerId(sessionIdOrCustomerId) {
+        const result = await this.cartRepository.findCartBySessionIdOrCustomerId(sessionIdOrCustomerId);
+        return result;
+    }
+
+    async findCartItems(cartId, productId) {
+        const cartItem = await this.cartRepository.findCartItems(cartId, productId);
+        return cartItem;
+    }
+
+    async addProductToCart(cartId, cartItemBody) {
+        await this.cartRepository.addProductToCart(cartId, cartItemBody);
     }
 }
 

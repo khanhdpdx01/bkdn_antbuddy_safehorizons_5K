@@ -1,8 +1,8 @@
-import NotFoundError from './NotFoundError';
-import BadRequest from './BadRequest';
-import Unauthorized from './Unauthorized';
+const NotFoundError = require('./NotFoundError');
+const BadRequest = require('./BadRequest');
+const Unauthorized = require('./Unauthorized');
 
-export default {
+module.exports = {
     NotFoundError,
     BadRequest,
     Unauthorized,

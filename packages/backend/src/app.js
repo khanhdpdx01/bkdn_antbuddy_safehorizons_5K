@@ -4,6 +4,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import swaggerUi from 'swagger-ui-express';
+import session from 'express-session';
 
 import { routes } from './routes/index';
 import { handleError } from './common/helpers/handleError';
@@ -12,15 +13,22 @@ import docs from './docs/index';
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(cors({ origin: /http:\/\/localhost/ }));
 app.use('*', cors());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser('secret-key-bkdn-nodejs'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(limiter);
-
+app.use(session({ 
+  secret:process.env.SECRET_SESSION,
+  cookie: {secure: false },
+  saveUninitialized: true, 
+  resave: true
+}));
 // swagger config
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
 
@@ -32,7 +40,7 @@ routes.forEach((route) => {
 app.use('/', (req, res, next) => res.json({
     statusCode: 200,
     message: 'server setup successfully',
-  }));
+}));
 
 // catch 404 and forward to error handler
 app.use((req, res) => {
