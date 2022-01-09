@@ -6,26 +6,30 @@ const cartController = new CartController();
 export default routerGroup({
         name: 'cart',
         prefix: '/cart',
-    }, [{
-        method: 'POST',
-        path: '/test',
-        handlers: [cartController.callMethod('addProductToCart')],
-    },
+    }, [
     {
         method: 'GET',
-        path: '/',
+        path: '/all',
         handlers: [cartController.callMethod('getAllCart')],
     }, {
         method: 'GET',
         path: '/:cartId',
         handlers: [cartController.callMethod('getCart')],
     }, {
+        method: 'POST',
+        path: '/',
+        handlers: [cartController.callMethod('addProductToCart')],
+    }, {
+        method: 'PATCH',
+        path: '/',
+        handlers: [cartController.callMethod('decreaseProductQuantity')],
+    }, {
         method: 'PUT',
-        path: '/:cartId',
+        path: '/',
         handlers: [cartController.callMethod('updateCart')],
     }, {
         method: 'DELETE',
-        path: '/:cartId',
-        handlers: [cartController.callMethod('deleteOneCart')],
+        path: '/',
+        handlers: [cartController.callMethod('deleteCartItem')],
     }
 ]);

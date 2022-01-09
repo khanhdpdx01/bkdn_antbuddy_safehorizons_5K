@@ -87,7 +87,7 @@ class OrderDetailsController extends BaseController {
             const result = await this.orderDetailsService.deleteOne(req.params.orderDetailsId);
             if (result) {
                 return res.status(200).json({
-                    statusCOde: 200,
+                    statusCode: 200,
                     message: 'Delete orderDetails successfully completed',
                 });
             }

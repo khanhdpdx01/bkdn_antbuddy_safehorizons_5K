@@ -40,33 +40,28 @@ class CartRepository extends BaseRepository {
 
     async findCartItems(cartId, productId, columns = ['*']) {
         let result = await knex('cart_items').select(columns)
-            .where({ cart_id: cartId, product_id: productId});
+            .where({ cart_id: cartId, product_id: productId}).first();
  
         return result;
     }
 
-    async addProductToCart(cartId, cartItemBody) {
-        let cartItem = await this.findCartItems(cartId, cartItemBody.product_id);
-        
-        if (cartItem.length === 0) {
-            await knex('cart_items').insert({
-                cart_id: cartId,
-                product_id: cartItemBody.product_id,
-                quantity: cartItemBody.quantity
-            });
-            
-        } else {
-          
-            cartItemBody.quantity += cartItem[0].quantity;
-    
-            await knex('cart_items').where({ cart_id: cartId, product_id: cartItemBody.product_id })
-                .update({ quantity: cartItemBody.quantity});
-        }
+    async insertCartItem(cartItemBody) {
+        const result = await knex('cart_items').insert(cartItemBody);
+        return result;
     }
-    
-    updateCartItem(cartItem) {
-        
+
+    async updateCartItem(clauses = {}, cartItemBody) {
+        const result = await knex('cart_items').where(clauses)
+                            .update(cartItemBody);
+        return result;
     }
+
+    async deleteCartItem(clauses = {}) {
+        const result = await knex('cart_items').where(clauses)
+                            .del();
+        return result;
+    }
+
 }
 
 export default CartRepository;

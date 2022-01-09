@@ -7,6 +7,7 @@ import {
 } from '../../errors/index';
 import {
     CART_NOT_FOUND,
+    CART_ITEM_NOT_FOUND
 } from '../../constants/HttpMessage';
 
 class CartController extends BaseController {
@@ -76,26 +77,76 @@ class CartController extends BaseController {
             if(!cart) {
                 cart = await this.cartService.addNewCart({session_id: sessionId});
             } 
-         
         } else {
             const decoded = await this.authentication.verifyToken(accessToken);
             const customer = await this.customerService.findOneByAccountId(decoded.account_id);
             cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
+            // guestCart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
             
             if(!cart) {
                 cart = await this.cartService.addNewCart({customer_id: customer.customer_id});
+                // merge guest's cart to customer's cart
+                // this.cartService.mergeGuestCartToCustomerCart(guestCart.cart_id, cart.cart_id);
             } 
-
         }
-       
         await this.cartService.addProductToCart(cart.cart_id, req.body);
         const updatedCartItem = await this.cartService.findCartItems(cart.cart_id, req.body.product_id);
 
         return res.status(201).json({ updatedCartItem });
     } 
 
-    async deleteProductFromCart(req, res, next) {
+    async decreaseProductQuantity(req, res, next) {
+        const accessToken = req.signedCookies.access_token;
+        const sessionId = req.sessionID;
+        let cart;
+        
+        if(!accessToken) {
+            cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
+            
+        } else {
+            const decoded = await this.authentication.verifyToken(accessToken);
+            const customer = await this.customerService.findOneByAccountId(decoded.account_id);
+            cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
+        }
 
+        if(!cart) {
+            throw new NotFoundError(CART_ITEM_NOT_FOUND);
+        }
+        await this.cartService.decreaseProductQuantity(cart.cart_id, req.body);
+        const updatedCartItem = await this.cartService.findCartItems(cart.cart_id, req.body.product_id);
+
+        if(!updatedCartItem) {
+            return res.status(200).json({
+                statusCode: 200,
+                message: 'Delete product out of cart completed',
+            });
+        }
+
+        return res.status(201).json({ updatedCartItem });
+    }
+
+    async deleteCartItem(req, res, next) {
+        const accessToken = req.signedCookies.access_token;
+        const sessionId = req.sessionID;
+        let cart;
+        
+        if(!accessToken) {
+            cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
+        } else {
+            const decoded = await this.authentication.verifyToken(accessToken);
+            const customer = await this.customerService.findOneByAccountId(decoded.account_id);
+            cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
+        }
+
+        if(!cart) {
+            throw new NotFoundError(CART_ITEM_NOT_FOUND);
+        }
+        const deletedCartItem = await this.cartService.deleteCartItem(cart.cart_id, req.body.product_id);
+
+        return res.status(200).json({
+            statusCode: 200,
+            message: 'Delete product out of cart completed',
+        });
     }
 
     async updateCart(req, res, next) {
@@ -112,22 +163,6 @@ class CartController extends BaseController {
             );
 
             return res.status(200).json({ updateCart });
-        } catch (err) {
-            next(err);
-        }
-    }
-
-    async deleteOneCart(req, res, next) {
-        try {
-            const result = await this.cartService.deleteOne(req.params.cartId);
-            if (result) {
-                return res.status(200).json({
-                    statusCOde: 200,
-                    message: 'Delete cart successfully completed',
-                });
-            }
-
-            throw new NotFoundError(CART_NOT_FOUND);
         } catch (err) {
             next(err);
         }
