@@ -73,7 +73,6 @@ class CartController extends BaseController {
         
         if(!accessToken) {
             cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
-            console.log(cart)
             if(!cart) {
                 cart = await this.cartService.addNewCart({session_id: sessionId});
             } 

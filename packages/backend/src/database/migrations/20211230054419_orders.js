@@ -1,8 +1,8 @@
 exports.up = (knex) => knex.schema.createTable('orders', (table) => {
     table.increments('order_id').primary();
     table.integer('customer_id').unsigned().notNullable();
-    table.integer('employee_id').unsigned().notNullable();
-    table.integer('shipper_id').unsigned().notNullable();
+    table.integer('employee_id').unsigned();
+    table.integer('shipper_id').unsigned();
     table.integer('orders_status_id').unsigned().notNullable();
     table.integer('payment_id').unsigned().notNullable();
     table.date('order_date').notNullable();

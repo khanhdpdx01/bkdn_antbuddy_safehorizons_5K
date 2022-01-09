@@ -13,9 +13,17 @@ class OrdersService {
         return OrdersService.instance;
     }
 
-    async addNewOrder(order) {
-        const newOrder = await this.orderRepository.create(order);
-        return newOrder;
+    async addNewOrder(customerId, order) {
+        const orderId = await this.orderRepository.create({
+            customer_id: customerId,
+            orders_status_id: order.orders_status_id,
+            payment_id: order.payment_id,
+            order_address: order.order_address,
+            ship_fee: order.ship_fee,
+        });
+        await this.addOrderDetails(orderId, order.line_items);
+        const result = await this.findOneByOrderId(orderId);
+        return result;
     }
 
     async getAllOrders(options) {
@@ -36,7 +44,9 @@ class OrdersService {
     }
 
     async findOneByOrderId(orderId) {
-        const order = await this.orderRepository.getBy({ id: orderId });
+        const order = await this.orderRepository.getBy({order_id: orderId});
+        const order_details = await this.findOrderDetails(orderId);
+        order.line_items = order_details;
         return order;
     }
 
@@ -51,6 +61,29 @@ class OrdersService {
     async deleteOne(orderId) {
         const result = await this.orderRepository.deleteOne(orderId);
         return result;
+    }
+
+    async addOrderDetails(orderId, lineItems) {
+        const orderDetails = lineItems.map(function(lineItem) {
+            return {
+                order_id: orderId,
+                product_id: lineItem.product_id,
+                order_details_status_id: lineItem.order_details_status_id,
+                quantity: lineItem.quantity,
+                price: lineItem.price,
+                discount: lineItem.discount
+            }
+        });
+
+        const result = await this.orderRepository.addOrderDetails(orderDetails);
+        return result;
+    }
+
+    async findOrderDetails(orderId) {
+        const orderDetails = await this.orderRepository.findOrderDetails({
+            order_id: orderId
+        });
+        return orderDetails;
     }
 }
 
