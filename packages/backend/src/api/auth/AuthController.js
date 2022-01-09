@@ -69,11 +69,11 @@ class AuthController extends BaseController {
         }, roleIds);
         // save verify email token into database
         const verifyEmailToken = await this.authentication.generateToken({ email });
+        res.status(201).json({ account });
         await Promise.all([
             this.authService.createTokenVerifyEMail(account[0], verifyEmailToken),
             this.mailService.sendVerificationEmail(email, verifyEmailToken),
         ]);
-        return res.status(201).json({ account });
     }
 
     async login(req, res) {
@@ -154,11 +154,11 @@ class AuthController extends BaseController {
     async forgotPassword(req, res) {
         const { email } = req.body;
         const resetPasswordToken = await this.authentication.generateToken({ email });
+        res.status(204).send();
         await Promise.all([
             this.authService.saveTokenResetPassword(email, resetPasswordToken),
             this.mailService.sendMailResetPassword(email, resetPasswordToken),
         ]);
-        return res.status(204).send();
     }
 
     async resetPassword(req, res) {
@@ -176,11 +176,11 @@ class AuthController extends BaseController {
     async sendVerifyEmail(req, res) {
         const { email } = req.body;
         const verifyEmailToken = await this.authentication.generateToken({ email });
+        res.status(403).send();
         await Promise.all([
             this.authService.saveTokenVerifyEmail(email, verifyEmailToken),
             this.mailService.sendVerificationEmail(email, verifyEmailToken),
         ]);
-        return res.status(403).send();
     }
 
     async verifyEmail(req, res) {

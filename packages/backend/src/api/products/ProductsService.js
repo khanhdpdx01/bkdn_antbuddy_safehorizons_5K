@@ -43,7 +43,7 @@ class ProductsService {
     async updateProduct(productId, productBody) {
         const customerUpdate = await this.productRepository.update(
             { id: productId },
-            { productBody },
+            productBody,
         );
         return customerUpdate;
     }

@@ -5,6 +5,7 @@ import authRouter from '../api/auth/router';
 import supplierRouter from '../api/suppliers/router';
 import shippersRouter from '../api/shippers/router';
 import employeesRouter from '../api/employees/router';
+import categoriesRouter from '../api/categories/router';
 
 export const routes = 
 [
@@ -15,4 +16,5 @@ export const routes =
     ...supplierRouter,
     ...shippersRouter,
     ...employeesRouter,
+    ...categoriesRouter,
 ];
