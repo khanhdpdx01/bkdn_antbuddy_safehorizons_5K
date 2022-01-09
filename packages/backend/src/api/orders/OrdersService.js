@@ -1,9 +1,11 @@
 import Repository from './OrdersRepository';
 import paginate from '../../utils/paginate';
+import ProductsRepository from '../products/ProductsRepository';
 
 class OrdersService {
     constructor() {
         this.orderRepository = Repository.getOrdersRepository();
+        this.productRepository = ProductsRepository.getProductsRepository();
     }
 
     static getOrdersService() {
@@ -74,7 +76,6 @@ class OrdersService {
                 discount: lineItem.discount
             }
         });
-
         const result = await this.orderRepository.addOrderDetails(orderDetails);
         return result;
     }

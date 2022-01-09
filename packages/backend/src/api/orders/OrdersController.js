@@ -1,6 +1,7 @@
 import BaseController from '../../infrastructure/Controllers/BaseController';
 import Authentication from '../../common/guards/authentication';
 import CustomersService from '../customers/CustomersService';
+import ProductService from '../products/ProductsService'
 import Service from './OrdersService';
 import {
     NotFoundError,
@@ -15,6 +16,7 @@ class OrderController extends BaseController {
         this.orderService = Service.getOrdersService();
         this.authentication = Authentication.getAuthentication();
         this.customerService = CustomersService.getCustomersService();
+        this.productService = ProductService.getProductsService();
     }
 
     static getOrdersController() {
@@ -62,8 +64,17 @@ class OrderController extends BaseController {
         const decoded = await this.authentication.verifyToken(accessToken);
         const customer = await this.customerService.findOneByAccountId(decoded.account_id);
         const newOrder = await this.orderService.addNewOrder(customer.customer_id, req.body);
-        return res.status(201).json({ newOrder });
+        res.status(201).json({ newOrder });
+        
+        newOrder.line_items.forEach(async function(lineItem) {
+            let product = await ProductService.getProductsService().findOneByProductId(lineItem.product_id);
+            ProductService.getProductsService().updateProduct(
+                lineItem.product_id,
+                { quantity: product.quantity - lineItem.quantity}
+            );
+        })
     }
+    
 
     async updateOrder(req, res, next) {
         try {

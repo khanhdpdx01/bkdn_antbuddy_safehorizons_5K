@@ -113,10 +113,6 @@ class CartService {
                     discount: product.discount 
                 });
             }
-            // await this.productRepository.update(
-            //     { product_id: cartItemBody.product_id },
-            //     { quantity: product.quantity - cartItemBody.quantity}
-            // );
         }
     }
 
