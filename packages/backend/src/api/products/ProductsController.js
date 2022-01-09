@@ -1,11 +1,14 @@
 import BaseController from '../../infrastructure/Controllers/BaseController';
 import Service from './ProductsService';
+import { uploadFile, getFile } from '../../utils/s3';
 import {
     NotFoundError,
 } from '../../errors/index';
 import {
-    CUSTOMER_NOT_FOUND,
+    PRODUCT_NOT_FOUND,
 } from '../../constants/HttpMessage';
+
+require('dotenv').config({ path: `${__dirname}/../../.env` });
 
 class ProductController extends BaseController {
     constructor() {
@@ -20,24 +23,42 @@ class ProductController extends BaseController {
         return ProductController.instance;
     }
 
+    mapModifyProduct(product) {
+        if (JSON.parse(product.images) instanceof Array) {
+            const images = JSON.parse(product.images).map((image) => `${process.env.URL_ENDPOINT_API}/products/images/${image}`);
+            return {
+                ...product,
+                images,
+                thumbnail: `${process.env.URL_ENDPOINT_API}/products/images/${product.thumbnail}`,
+            };
+        }
+
+        return {
+            ...product,
+            thumbnail: `${process.env.URL_ENDPOINT_API}/products/images/${product.thumbnail}`,
+        };
+    }
+
     async getAllProducts(req, res) {
         const {
             sortBy, limit, page,
         } = req.query;
-        const products = await this.productService.getAllProducts({
+        const data = await this.productService.getAllProducts({
             sortBy, limit, page,
         });
-        return res.status(200).json({ products });
+
+        const responseData = data.products.map((product) => this.mapModifyProduct(product));
+
+        return res.status(200).json({ data: responseData });
     }
 
     async getProduct(req, res, next) {
         try {
-            const product = await this.productService.getBy({ id: req.params.productId });
+            const product = await this.productService.findOneByProductId(req.params.productId);
             if (!product) {
-                throw new NotFoundError(CUSTOMER_NOT_FOUND);
+                throw new NotFoundError(PRODUCT_NOT_FOUND);
             }
-
-            return res.status(200).json({ product });
+            return res.status(200).json({ product: this.mapModifyProduct(product) });
         } catch (err) {
             return next(err);
         }
@@ -45,7 +66,13 @@ class ProductController extends BaseController {
 
     async createProduct(req, res, next) {
         try {
-            const product = await this.productService.addNewProduct(req.body);
+            const files = await uploadFile(req.files);
+            const data = {
+                ...req.body,
+                thumbnail: req.files[0].filename,
+                images: JSON.stringify(req.files.map((file) => file.filename)),
+            };
+            const product = await this.productService.addNewProduct(data);
             return res.status(201).json({ product });
         } catch (err) {
             next(err);
@@ -55,35 +82,25 @@ class ProductController extends BaseController {
     async updateProduct(req, res, next) {
         try {
             const { productId } = req.params;
-            const product = await this.productService.findOneByCustomerId(productId);
-            if (product) {
-                throw new NotFoundError(CUSTOMER_NOT_FOUND);
+            const product = await this.productService.findOneByProductId(productId);
+            if (!product) {
+                throw new NotFoundError(PRODUCT_NOT_FOUND);
             }
 
             const productUpdate = await this.productService.updateProduct(
                 productId,
                 {
-                    company: req.body.company,
-                    last_name: req.body.last_name,
-                    first_name: req.body.first_name,
-                    email_address: req.body.email_address,
-                    job_title: req.body.job_title,
-                    business_phone: req.body.business_phone,
-                    home_phone: req.body.home_phone,
-                    mobile_phone: req.body.mobile_phone,
-                    fax_number: req.body.fax_number,
-                    address: req.body.address,
-                    city: req.body.city,
-                    state_province: req.body.state_province,
-                    zip_postal_code: req.body.zip_postal_code,
-                    country_region: req.body.country_region,
-                    web_page: req.body.web_page,
-                    notes: req.body.notes,
-                    attachments: req.body.attachments,
+                    product_name: req.body.product_name,
+                    supplier_id: req.body.supplier_id,
+                    category_id: req.body.category_id,
+                    unit: req.body.unit,
+                    price: req.body.price,
+                    quantity: req.body.quantity,
+                    discount: req.body.discount,
                 },
             );
 
-            return res.status(200).json({ updateProduct });
+            return res.status(200).json({ productUpdate });
         } catch (err) {
             next(err);
         }
@@ -99,7 +116,16 @@ class ProductController extends BaseController {
                 });
             }
 
-            throw new NotFoundError(CUSTOMER_NOT_FOUND);
+            throw new NotFoundError(PRODUCT_NOT_FOUND);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getImage(req, res, next) {
+        try {
+            const readStream = await getFile(req.params.key);
+            return readStream.pipe(res);
         } catch (err) {
             next(err);
         }

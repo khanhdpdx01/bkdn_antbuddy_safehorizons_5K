@@ -1,7 +1,16 @@
+import multer from 'multer';
 import ProductsController from './ProductsController';
 import { routerGroup } from '../../common/helpers/routerGroup';
 
 const productsController = new ProductsController();
+// const storage = multer.memoryStorage({
+//     destination(req, file, callback) {
+//         callback(null, 'uploads/');
+//     },
+// });
+// const multipleUpload = multer({ storage }).array('file');
+const distStorage = multer({ dest: 'uploads/' });
+const multipleUpload = distStorage.array('file');
 
 export default routerGroup({
         name: 'products',
@@ -18,7 +27,7 @@ export default routerGroup({
     }, {
         method: 'POST',
         path: '/',
-        handlers: [productsController.callMethod('createProduct')],
+        handlers: [multipleUpload, productsController.callMethod('createProduct')],
     }, {
         method: 'PUT',
         path: '/:productId',
@@ -27,5 +36,9 @@ export default routerGroup({
         method: 'DELETE',
         path: '/:productId',
         handlers: [productsController.callMethod('deleteOneProduct')],
+    }, {
+        method: 'GET',
+        path: '/images/:key',
+        handlers: [productsController.callMethod('getImage')],
     },
 ]);

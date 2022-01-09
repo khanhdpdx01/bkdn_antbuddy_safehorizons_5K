@@ -33,6 +33,7 @@ class AuthService {
             role_id: roleId,
         }));
         await this.accountsRepository.createAccountsRoles(accounstRoles);
+        
         return newAccount;
     }
 

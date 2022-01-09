@@ -57,6 +57,11 @@ class RolesService {
         const result = await this.rolesRepository.deleteOne(roleId);
         return result;
     }
+
+    async getListByRoleIds(roleIds) { 
+        const result = await this.rolesRepository.listInBy('role_id', roleIds);
+        return result;
+    }
 }
 
 export default RolesService;

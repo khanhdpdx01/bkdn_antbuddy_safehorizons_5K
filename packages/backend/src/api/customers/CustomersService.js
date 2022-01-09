@@ -40,6 +40,11 @@ class CustomersService {
         return customer;
     }
 
+    async findOneByAccountId(accountId) {
+        const customer = await this.customerRepository.getBy({account_id: accountId});
+        return customer;
+    }
+
     async findOneByMobilePhone(mobilePhone) {
         const customer = await this.customerRepository.findByMobilePhone(mobilePhone);
         return customer;

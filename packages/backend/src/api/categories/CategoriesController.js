@@ -4,7 +4,7 @@ import {
     NotFoundError,
 } from '../../errors/index';
 import {
-    CUSTOMER_NOT_FOUND,
+    CATEGORY_NOT_FOUND,
 } from '../../constants/HttpMessage';
 
 class CategoriesController extends BaseController {
@@ -13,7 +13,7 @@ class CategoriesController extends BaseController {
         this.categoriesService = Service.getCategoriesService();
     }
 
-    static getProductsController() {
+    static getCategoriesController() {
         if (!CategoriesController.instance) {
             CategoriesController.instance = new CategoriesController();
         }
@@ -30,45 +30,61 @@ class CategoriesController extends BaseController {
         return res.status(200).json({ categories });
     }
 
-    async getOneCategory(req, res) {
-        const category = await this.categoriesService.findOneByCategoryId(req.params.productId);
-        if (!category) {
-            throw new NotFoundError(CUSTOMER_NOT_FOUND);
-        }
+    async getCategory(req, res, next) {
+        try {
+            const category = await this.categoriesService.getBy({ id: req.params.categoryId });
+            if (!category) {
+                throw new NotFoundError(CATEGORY_NOT_FOUND);
+            }
 
-        return res.status(200).json({ category });
+            return res.status(200).json({ category });
+        } catch (err) {
+            return next(err);
+        }
     }
 
-    async createCategory(req, res) {
-        const category = await this.categoriesService.addNewCategory(req.body);
-        return res.status(201).json({ category });
+    async createCategory(req, res, next) {
+        try {
+            const category = await this.categoriesService.addNewCategory(req.body);
+            return res.status(201).json({ category });
+        } catch (err) {
+            next(err);
+        }
     }
 
-    async updateCategory(req, res) {
-        const { categoryId } = req.params;
-        const product = await this.categoriesService.findOneByCategoryId(categoryId);
-        if (product) {
-            throw new NotFoundError(CUSTOMER_NOT_FOUND);
+    async updateCategory(req, res, next) {
+        try {
+            const { categoryId } = req.params;
+            const category = await this.categoriesService.findOneByCategoryId(categoryId);
+            if (category) {
+                throw new NotFoundError(CATEGORY_NOT_FOUND);
+            }
+
+            const categoryUpdate = await this.categoriesService.updateCategory(
+                categoryId,
+                req.body,
+            );
+
+            return res.status(200).json({ categoryUpdate });
+        } catch (err) {
+            next(err);
         }
-
-        const categoryUpdate = await this.categoriesService.updateCategory(
-            categoryId,
-            req.body,
-        );
-
-        return res.status(200).json({ categoryUpdate });
     }
 
-    async deleteOneCategory(req, res) {
-        const result = await this.categoriesService.deleteOne(req.params.categoryId);
-        if (result) {
-            return res.status(200).json({
-                statusCode: 200,
-                message: 'Delete product successfully completed',
-            });
-        }
+    async deleteOneCategory(req, res, next) {
+        try {
+            const result = await this.categoriesService.deleteOne(req.params.categoryId);
+            if (result) {
+                return res.status(200).json({
+                    statusCOde: 200,
+                    message: 'Delete category successfully completed',
+                });
+            }
 
-        throw new NotFoundError(CUSTOMER_NOT_FOUND);
+            throw new NotFoundError(CATEGORY_NOT_FOUND);
+        } catch (err) {
+            next(err);
+        }
     }
 }
 export default CategoriesController;

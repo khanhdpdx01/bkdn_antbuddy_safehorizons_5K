@@ -28,6 +28,10 @@ class BaseRepository {
       .innerJoin(joinTableName, `${this.getTableName()}.${primaryKey}`, `${joinTableName}.${foreignKey}`);
   }
 
+  listInBy(column, array, columns = ['*']) {
+    return this.cloneQuery().whereIn(column, array).select(columns);
+  }
+
   count() {
     return this.cloneQuery().count({ count: '*' });
   }

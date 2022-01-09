@@ -20,9 +20,9 @@ class CategoriesService {
 
     async getAllCategories(options) {
         const pagingAndSort = paginate(options);
-        const countCategorys = this.categoriesRepository.count();
+        const countCategories = this.categoriesRepository.count();
         const categories = this.categoriesRepository.findAll(pagingAndSort);
-        return Promise.all([countCategorys, categories]).then((results) => {
+        return Promise.all([countCategories, categories]).then((results) => {
             const [counts, data] = results;
             const totalPages = Math.ceil(counts[0].count / pagingAndSort.limit);
             return Promise.resolve({
@@ -35,14 +35,14 @@ class CategoriesService {
         });
     }
 
-    async findOneByCategoryId(categoryId) {
-        const Category = await this.categoriesRepository.findByCategoryId(categoryId);
-        return Category;
+    async findOneByCategory(categoryId) {
+        const category = await this.categoriesRepository.getBy({ id: categoryId });
+        return category;
     }
 
-    async updateCategory(categoryId, categoryBody) {
+    async updateProduct(categoryId, categoryBody) {
         const categoryUpdate = await this.categoriesRepository.update(
-            { category_id: categoryId },
+            { id: categoryId },
             categoryBody,
         );
         return categoryUpdate;

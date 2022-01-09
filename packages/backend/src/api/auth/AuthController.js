@@ -1,6 +1,10 @@
 import bcrypt from 'bcrypt';
 import BaseController from '../../infrastructure/Controllers/BaseController';
 import Service from './AuthServices';
+import CustomersService from '../customers/CustomersService';
+import ShippersService from '../shippers/ShippersService';
+import SuppliersService from '../suppliers/SuppliersService';
+import RolesService from '../roles/RolesService';
 import Authentication from '../../common/guards/authentication';
 import MailService from '../../utils/MailService';
 import {
@@ -24,6 +28,10 @@ class AuthController extends BaseController {
         this.authService = Service.getAuthService();
         this.authentication = Authentication.getAuthentication();
         this.mailService = MailService.getMailService();
+        this.customerService = CustomersService.getCustomersService();
+        this.shippersService = ShippersService.getShippersService();
+        this.suppliersService = SuppliersService.getSuppliersService();
+        this.rolesService = RolesService.getRolesService();
     }
 
     static getAuthController() {
@@ -64,9 +72,15 @@ class AuthController extends BaseController {
         ]);
         if (isUsername) throw new BadRequest(USERNAME_EXISTS);
         if (isEmail) throw new BadRequest(EMAIL_EXISTS);
-        const account = await this.authService.addNewAccount({
-            username, email, password: hash,
-        }, roleIds);
+
+        const [account, roles] = await Promise.all([
+            this.authService.addNewAccount({
+                username, email, password: hash,
+            }, roleIds),
+            this.rolesService.getListByRoleIds(roleIds),
+        ]);
+
+        const ids = this.insertAccountIdIntoTables(account[0], roles);
         // save verify email token into database
         const verifyEmailToken = await this.authentication.generateToken({ email });
         res.status(201).json({ account });
@@ -193,6 +207,30 @@ class AuthController extends BaseController {
             status: 'success',
             message: 'Verification email success!',
         });
+    }
+
+    async insertAccountIdIntoTables(accountId, roles) {
+        let result = [];
+        let temp;
+        const authController = AuthController.getAuthController();
+        
+        roles.forEach(function(role) {
+            switch(role.role_name) {
+                case 'CUSTOMER':
+                    temp =  authController.customerService.addNewCustomer({account_id: accountId});
+                    result.push(temp);
+                    break;
+                case 'SHIPPER':
+                    temp =  authController.shippersService.addNewShipper({account_id: accountId});
+                    result.push(temp);
+                    break;
+                case 'SUPPLIER':
+                    temp =  authController.suppliersService.addNewSupplier({account_id: accountId});
+                    result.push(temp);
+                    break;
+            }
+        })
+        return result;
     }
 }
 export default AuthController;
