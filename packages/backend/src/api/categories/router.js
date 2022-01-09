@@ -1,5 +1,6 @@
 import CategoriesController from './CategoriesController';
 import { routerGroup } from '../../common/helpers/routerGroup';
+import ValidationHelper from '../../common/filters/validation';
 
 const categoriesController = new CategoriesController();
 

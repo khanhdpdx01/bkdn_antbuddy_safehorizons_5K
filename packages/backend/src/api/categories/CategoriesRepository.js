@@ -17,11 +17,11 @@ class CategoriesRepository extends BaseRepository {
     }
 
     findByCategoryId(categoryId) {
-        return this.getBy({ id: categoryId });
+        return this.getBy({ category_id: categoryId });
     }
-    
+
     deleteOne(categoryId) {
-        return this.delete({ id: categoryId });
+        return this.delete({ category_id: categoryId });
     }
 }
 

@@ -30,7 +30,7 @@ class CategoriesService {
                 totalPages,
                 limit: pagingAndSort.limit,
                 page: pagingAndSort.page,
-                totalProducts: counts[0].count,
+                totalCategories: counts[0].count,
             });
         });
     }
@@ -43,7 +43,7 @@ class CategoriesService {
     async updateProduct(categoryId, categoryBody) {
         const categoryUpdate = await this.categoriesRepository.update(
             { id: categoryId },
-            { categoryBody },
+            categoryBody,
         );
         return categoryUpdate;
     }

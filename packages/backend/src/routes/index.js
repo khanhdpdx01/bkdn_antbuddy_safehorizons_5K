@@ -5,6 +5,7 @@ import authRouter from '../api/auth/router';
 import supplierRouter from '../api/suppliers/router';
 import shippersRouter from '../api/shippers/router';
 import employeesRouter from '../api/employees/router';
+import categoriesRouter from '../api/categories/router';
 import cartRouter from '../api/cart/router';
 import orderRouter from '../api/orders/router'
 
@@ -17,6 +18,7 @@ export const routes =
     ...supplierRouter,
     ...shippersRouter,
     ...employeesRouter,
+    ...categoriesRouter,
     ...cartRouter,
     ...orderRouter
 ];

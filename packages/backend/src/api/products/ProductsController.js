@@ -1,11 +1,14 @@
 import BaseController from '../../infrastructure/Controllers/BaseController';
 import Service from './ProductsService';
+import { uploadFile, getFile } from '../../utils/s3';
 import {
     NotFoundError,
 } from '../../errors/index';
 import {
     PRODUCT_NOT_FOUND,
 } from '../../constants/HttpMessage';
+
+require('dotenv').config({ path: `${__dirname}/../../.env` });
 
 class ProductController extends BaseController {
     constructor() {
@@ -20,15 +23,33 @@ class ProductController extends BaseController {
         return ProductController.instance;
     }
 
+    mapModifyProduct(product) {
+        if (JSON.parse(product.images) instanceof Array) {
+            const images = JSON.parse(product.images).map((image) => `${process.env.URL_ENDPOINT_API}/products/images/${image}`);
+            return {
+                ...product,
+                images,
+                thumbnail: `${process.env.URL_ENDPOINT_API}/products/images/${product.thumbnail}`,
+            };
+        }
+
+        return {
+            ...product,
+            thumbnail: `${process.env.URL_ENDPOINT_API}/products/images/${product.thumbnail}`,
+        };
+    }
+
     async getAllProducts(req, res) {
         const {
             sortBy, limit, page,
         } = req.query;
-        const products = await this.productService.getAllProducts({
+        const data = await this.productService.getAllProducts({
             sortBy, limit, page,
         });
 
-        return res.status(200).json({ products });
+        const responseData = data.products.map((product) => this.mapModifyProduct(product));
+
+        return res.status(200).json({ data: responseData });
     }
 
     async getProduct(req, res, next) {
@@ -37,8 +58,7 @@ class ProductController extends BaseController {
             if (!product) {
                 throw new NotFoundError(PRODUCT_NOT_FOUND);
             }
-
-            return res.status(200).json({ product });
+            return res.status(200).json({ product: this.mapModifyProduct(product) });
         } catch (err) {
             return next(err);
         }
@@ -46,7 +66,13 @@ class ProductController extends BaseController {
 
     async createProduct(req, res, next) {
         try {
-            const product = await this.productService.addNewProduct(req.body);
+            const files = await uploadFile(req.files);
+            const data = {
+                ...req.body,
+                thumbnail: req.files[0].filename,
+                images: JSON.stringify(req.files.map((file) => file.filename)),
+            };
+            const product = await this.productService.addNewProduct(data);
             return res.status(201).json({ product });
         } catch (err) {
             next(err);
@@ -62,7 +88,16 @@ class ProductController extends BaseController {
             }
 
             const productUpdate = await this.productService.updateProduct(
-                productId, req.body
+                productId,
+                {
+                    product_name: req.body.product_name,
+                    supplier_id: req.body.supplier_id,
+                    category_id: req.body.category_id,
+                    unit: req.body.unit,
+                    price: req.body.price,
+                    quantity: req.body.quantity,
+                    discount: req.body.discount,
+                },
             );
 
             return res.status(200).json({ productUpdate });
@@ -82,6 +117,15 @@ class ProductController extends BaseController {
             }
 
             throw new NotFoundError(PRODUCT_NOT_FOUND);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getImage(req, res, next) {
+        try {
+            const readStream = await getFile(req.params.key);
+            return readStream.pipe(res);
         } catch (err) {
             next(err);
         }

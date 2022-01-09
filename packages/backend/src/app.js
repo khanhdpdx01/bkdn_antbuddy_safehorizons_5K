@@ -23,11 +23,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser('secret-key-bkdn-nodejs'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(limiter);
-app.use(session({ 
-  secret:process.env.SECRET_SESSION,
-  cookie: {secure: false },
-  saveUninitialized: true, 
-  resave: true
+app.use(session({
+  secret: process.env.SECRET_SESSION,
+  cookie: { secure: false },
+  saveUninitialized: true,
+  resave: true,
 }));
 // swagger config
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs));

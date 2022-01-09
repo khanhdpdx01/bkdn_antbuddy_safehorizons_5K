@@ -9,12 +9,10 @@ const paginate = (options) => {
         });
         sort = sortingCriteria;
     } else {
-        sort = [
-            {
-                column: 'created_at',
-                order: 'asc'
-            }
-        ];
+        sort = [{
+            column: 'created_at',
+            order: 'asc',
+        }];
     }
 
     const limit = options.limit && parseInt(options.limit, 10) > 0

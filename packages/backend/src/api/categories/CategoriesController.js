@@ -62,18 +62,10 @@ class CategoriesController extends BaseController {
 
             const categoryUpdate = await this.categoriesService.updateCategory(
                 categoryId,
-                {
-                    product_name: req.body.product_name,
-                    supplier_id: req.body.supplier_id,
-                    category_id: req.body.category_id,
-                    unit: req.body.unit,
-                    price: req.body.price,
-                    quantity: req.body.quantity,
-                    discount: req.body.discount,
-                },
+                req.body,
             );
 
-            return res.status(200).json({ updateCategory });
+            return res.status(200).json({ categoryUpdate });
         } catch (err) {
             next(err);
         }
