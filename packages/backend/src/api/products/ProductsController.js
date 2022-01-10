@@ -39,17 +39,28 @@ class ProductController extends BaseController {
         };
     }
 
-    async getAllProducts(req, res) {
-        const {
-            sortBy, limit, page,
-        } = req.query;
-        const data = await this.productService.getAllProducts({
-            sortBy, limit, page,
-        });
+    async getAllProducts(req, res, next) {
+        try {
+            const {
+                sortBy, limit, page,
+            } = req.query;
+            const data = await this.productService.getAllProducts({
+                sortBy, limit, page,
+            });
 
-        const responseData = data.products.map((product) => this.mapModifyProduct(product));
+            const responseData = data.products.length > 0
+                ? data.products.map((product) => this.mapModifyProduct(product)) : [];
 
-        return res.status(200).json({ data: responseData });
+            return res.status(200).json({
+                products: responseData,
+                totalPages: data.totalPages,
+                limit: data.limit,
+                page: data.page,
+                totalProducts: data.count,
+            });
+        } catch (err) {
+            next(err);
+        }
     }
 
     async getProduct(req, res, next) {
