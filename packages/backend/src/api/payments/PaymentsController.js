@@ -78,7 +78,7 @@ class PaymentsController extends BaseController {
             const result = await this.paymentsService.deleteOne(req.params.paymentId);
             if (result) {
                 return res.status(200).json({
-                    statusCOde: 200,
+                    statusCode: 200,
                     message: 'Delete payment successfully completed',
                 });
             }

@@ -1,4 +1,5 @@
 import BaseRepository from '../../infrastructure/Repositories/BaseRepository';
+import knex from '../../config/connection';
 
 class OrdersRepository extends BaseRepository {
     static getOrdersRepository() {
@@ -16,12 +17,19 @@ class OrdersRepository extends BaseRepository {
         return this.listByPagingAndSort(pagingAndSort);
     }
 
-    findByOrdersId(orderId) {
-        return this.getBy({ id: orderId });
-    }
-
     deleteOne(orderId) {
         return this.delete({ id: orderId });
+    }
+
+    async addOrderDetails(orderDetails) {
+        const result = await knex('order_details').insert(orderDetails);
+        return result;
+    }
+
+    async findOrderDetails(clauses = {}, columns = '*') {
+        const result = await knex('order_details').select(columns)
+                                .where(clauses);
+        return result;
     }
 }
 

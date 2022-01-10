@@ -7,6 +7,7 @@ import shippersRouter from '../api/shippers/router';
 import employeesRouter from '../api/employees/router';
 import categoriesRouter from '../api/categories/router';
 import cartRouter from '../api/cart/router';
+import orderRouter from '../api/orders/router'
 
 export const routes = 
 [
@@ -19,4 +20,5 @@ export const routes =
     ...employeesRouter,
     ...categoriesRouter,
     ...cartRouter,
+    ...orderRouter
 ];

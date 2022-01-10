@@ -16,4 +16,6 @@ module.exports = {
     VERIFY_EMAIL_REQUIRED: 'Your email address verify required',
     USERNAME_EXISTS: 'Username already exists',
     ROLE_NOT_FOUND: 'Role not found',
+    PRODUCT_NOT_ENOUGH: 'Product not enough to add cart',
+    CART_ITEM_NOT_FOUND: 'Cart item not found'
 };

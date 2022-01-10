@@ -76,7 +76,7 @@ class CategoriesController extends BaseController {
             const result = await this.categoriesService.deleteOne(req.params.categoryId);
             if (result) {
                 return res.status(200).json({
-                    statusCOde: 200,
+                    statusCode: 200,
                     message: 'Delete category successfully completed',
                 });
             }

@@ -41,11 +41,11 @@ class ProductsService {
     }
 
     async updateProduct(productId, productBody) {
-        const customerUpdate = await this.productRepository.update(
+        const productUpdate = await this.productRepository.update(
             { product_id: productId },
             productBody,
         );
-        return customerUpdate;
+        return productUpdate;
     }
 
     async deleteOne(productId) {

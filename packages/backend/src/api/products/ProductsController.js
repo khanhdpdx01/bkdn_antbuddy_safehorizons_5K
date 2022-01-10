@@ -122,7 +122,7 @@ class ProductController extends BaseController {
             const result = await this.productService.deleteOne(req.params.productId);
             if (result) {
                 return res.status(200).json({
-                    statusCOde: 200,
+                    statusCode: 200,
                     message: 'Delete product successfully completed',
                 });
             }
