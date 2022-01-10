@@ -125,7 +125,7 @@ class AuthService {
             throw new Unauthorized(UNAUTHORIZED);
         }
         const refreshToken = this.authentication.generateToken({
-            accountId: authIdentity.account_id,
+            account_id: authIdentity.account_id,
         });
         await this.accountsRepository.updateAuthIdentities(
             { account_id: authIdentity.account_id },

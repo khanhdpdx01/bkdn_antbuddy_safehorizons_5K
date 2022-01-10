@@ -17,17 +17,30 @@ app.set('trust proxy', 1);
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(cors({ origin: /http:\/\/localhost/ }));
-app.use('*', cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', ' PUT', 'DELETE', 'PATCH'],
+  credentials: true, // enable set cookie
+}));
+app.use('*', cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', ' PUT', 'DELETE', 'PATCH'],
+  credentials: true, // enable set cookie
+}));
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser('secret-key-bkdn-nodejs'));
+app.use(cookieParser(process.env.SECRET_SESSION));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(limiter);
 app.use(session({
   secret: process.env.SECRET_SESSION,
-  cookie: { secure: false },
+  cookie: {
+    maxAge: 60 * 60 * 24 * 1000,
+    sameSite: 'Lax',
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+  },
   saveUninitialized: true,
-  resave: true,
+  resave: false,
 }));
 // swagger config
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs));

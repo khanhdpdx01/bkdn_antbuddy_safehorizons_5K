@@ -105,11 +105,14 @@ class AuthController extends BaseController {
         }
         const accessToken = await this.authService.generateAuthTokens(account[0].account_id);
         const roles = account.map((acc) => ({ role_id: acc.role_id, role_name: acc.role_name }));
-        return res.cookie('access_token', accessToken, {
+        res.cookie('access_token', JSON.stringify(accessToken), {
             httpOnly: true,
             signed: true,
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: 'Lax',
             secure: process.env.NODE_ENV === 'production',
-        }).status(200).json({
+        });
+        return res.status(200).json({
             status: 'success',
             data: roles,
         });
@@ -151,13 +154,8 @@ class AuthController extends BaseController {
 
     async refreshToken(req, res) {
         const accessToken = req.signedCookies.access_token;
-        const { username, password } = req.body;
         if (!accessToken) {
-            if (username && password) {
-                this.login(req, res);
-            } else {
-                throw new Unauthorized(UNAUTHORIZED);
-            }
+            throw new Unauthorized(UNAUTHORIZED);
         }
         const updateToken = await this.authService.refreshAuthTokens(accessToken);
         return res.cookie('access_token', updateToken, {

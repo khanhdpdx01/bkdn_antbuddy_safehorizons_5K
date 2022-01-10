@@ -1,5 +1,6 @@
 import CartController from './CartController';
 import { routerGroup } from '../../common/helpers/routerGroup';
+import catchAsync from '../../utils/catchAsync';
 
 const cartController = new CartController();
 
@@ -10,26 +11,26 @@ export default routerGroup({
     {
         method: 'GET',
         path: '/all',
-        handlers: [cartController.callMethod('getAllCart')],
+        handlers: [catchAsync(cartController.callMethod('getAllCart'))],
     }, {
         method: 'GET',
         path: '/:cartId',
-        handlers: [cartController.callMethod('getCart')],
+        handlers: [catchAsync(cartController.callMethod('getCart'))],
     }, {
         method: 'POST',
         path: '/',
-        handlers: [cartController.callMethod('addProductToCart')],
+        handlers: [catchAsync(cartController.callMethod('addProductToCart'))],
     }, {
         method: 'PATCH',
         path: '/',
-        handlers: [cartController.callMethod('decreaseProductQuantity')],
+        handlers: [catchAsync(cartController.callMethod('decreaseProductQuantity'))],
     }, {
         method: 'PUT',
         path: '/',
-        handlers: [cartController.callMethod('updateCart')],
+        handlers: [catchAsync(cartController.callMethod('updateCart'))],
     }, {
         method: 'DELETE',
         path: '/',
-        handlers: [cartController.callMethod('deleteCartItem')],
+        handlers: [catchAsync(cartController.callMethod('deleteCartItem'))],
     },
 ]);

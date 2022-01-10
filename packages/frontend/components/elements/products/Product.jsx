@@ -5,12 +5,10 @@ import Link from 'next/link';
 import { Modal } from 'antd';
 import ProductDetailQuickView from '../detail/ProductDetailQuickView';
 import Rating from '../Rating';
-import { baseUrl } from '../../../repositories/Repository';
 import { formatCurrency } from '../../../utilities/product-helper';
 import { addItem } from '../../../store/cart/action';
 import { addItemToCompare } from '../../../store/compare/action';
 import { addItemToWishlist } from '../../../store/wishlist/action';
-import { isStaticData } from '../../../utilities/app-settings';
 
 class Product extends Component {
     constructor(props) {
@@ -23,7 +21,10 @@ class Product extends Component {
     handleAddItemToCart = (e) => {
         e.preventDefault();
         const { product } = this.props;
-        this.props.dispatch(addItem(product));
+        this.props.dispatch(addItem({
+            product_id: product.product_id,
+            quantity: 1,
+        }));
     };
 
     handleAddItemToCompare = (e) => {
@@ -147,13 +148,13 @@ class Product extends Component {
                             <Rating />
                             <span>{product.price}</span>
                         </div>
-                        {product.is_sale === true ? (
+                        {product.discount > 0 ? (
                             <p className="ps-product__price sale">
                                 {currency ? currency.symbol : '$'}
-                                {formatCurrency(product.price)}
+                                {formatCurrency(product.price*1000)}
                                 <del className="ml-2">
                                     {currency ? currency.symbol : '$'}
-                                    {formatCurrency(product.sale_price)}
+                                    {formatCurrency(product.discount*product.price/100*1000)}
                                 </del>
                             </p>
                         ) : (
@@ -166,16 +167,16 @@ class Product extends Component {
                     <div className="ps-product__content hover">
                         <Link
                             href="/product/[pid]"
-                            as={`/product/${product.id}`}>
-                            <a className="ps-product__title">{product.title}</a>
+                            as={`/product/${product.product_id}`}>
+                            <a className="ps-product__title">{product.product_name}</a>
                         </Link>
-                        {product.is_sale === true ? (
+                        {product.discount > 0 ? (
                             <p className="ps-product__price sale">
                                 {currency ? currency.symbol : '$'}
                                 {formatCurrency(product.price*1000)}{' '}
                                 <del className="ml-2">
                                     {currency ? currency.symbol : '$'}
-                                    {product.sale_price*1000}
+                                    {product.discount*1000}
                                 </del>
                             </p>
                         ) : (
@@ -187,7 +188,7 @@ class Product extends Component {
                     </div>
                 </div>
                 <Modal
-                    title={product.title}
+                    title={product.product_name}
                     centered
                     footer={null}
                     width={1024}

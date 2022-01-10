@@ -1,5 +1,6 @@
-import { all, put, takeEvery } from 'redux-saga/effects';
+import { all, put, takeEvery, call } from 'redux-saga/effects';
 import { notification } from 'antd';
+import CartService from '../../services/CartService';
 
 import {
     actionTypes,
@@ -37,26 +38,28 @@ function* getCartSaga() {
     }
 }
 
-function* addItemSaga(payload) {
+function* addItemSaga({ product }) {
     try {
-        const { product } = payload;
-        const localCart = JSON.parse(localStorage.getItem('persist:martfury'))
-            .cart;
-        let currentCart = JSON.parse(localCart);
-        let existItem = currentCart.cartItems.find(
-            (item) => item.id === product.id
-        );
-        if (existItem) {
-            existItem.quantity += product.quantity;
-        } else {
-            if (!product.quantity) {
-                product.quantity = 1;
-            }
-            currentCart.cartItems.push(product);
-        }
-        currentCart.amount = calculateAmount(currentCart.cartItems);
-        currentCart.cartTotal++;
-        yield put(updateCartSuccess(currentCart));
+        // const { product } = payload;
+        // const localCart = JSON.parse(localStorage.getItem('persist:martfury'))
+        //     .cart;
+        // let currentCart = JSON.parse(localCart);
+        // let existItem = currentCart.cartItems.find(
+        //     (item) => item.id === product.id
+        // );
+        // if (existItem) {
+        //     existItem.quantity += product.quantity;
+        // } else {
+        //     if (!product.quantity) {
+        //         product.quantity = 1;
+        //     }
+        //     currentCart.cartItems.push(product);
+        // }
+        // currentCart.amount = calculateAmount(currentCart.cartItems);
+        // currentCart.cartTotal++;
+        const data = yield call(CartService.addProductToCart, product);
+        console.log(data)
+        yield put(updateCartSuccess(data));
         modalSuccess('success');
     } catch (err) {
         yield put(getCartError(err));

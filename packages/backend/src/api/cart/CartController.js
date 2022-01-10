@@ -7,8 +7,9 @@ import {
 } from '../../errors/index';
 import {
     CART_NOT_FOUND,
-    CART_ITEM_NOT_FOUND
+    CART_ITEM_NOT_FOUND,
 } from '../../constants/HttpMessage';
+import jwt from 'jsonwebtoken';
 
 class CartController extends BaseController {
     constructor() {
@@ -70,7 +71,6 @@ class CartController extends BaseController {
         const accessToken = req.signedCookies.access_token;
         const sessionId = req.sessionID;
         let cart;
-
         if (!accessToken) {
             cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
             if (!cart) {
@@ -81,7 +81,6 @@ class CartController extends BaseController {
             const customer = await this.customerService.findOneByAccountId(decoded.account_id);
             cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
             // guestCart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
-
             if (!cart) {
                 cart = await this.cartService.addNewCart({customer_id: customer.customer_id});
                 // merge guest's cart to customer's cart
