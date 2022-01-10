@@ -36,16 +36,22 @@ class CartController extends BaseController {
     }
 
     async getCart(req, res, next) {
-        try {
-            const cart = await this.cartService.getBy({ cartId: req.params.cartId });
-            if (!cart) {
-                throw new NotFoundError(CART_NOT_FOUND);
-            }
+        const accessToken = req.signedCookies.access_token;
+        const sessionId = req.sessionID;
+        let cart;
 
-            return res.status(200).json({ cart });
-        } catch (err) {
-            return next(err);
+        if (!accessToken) {
+            cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
+        } else {
+            const decoded = await this.authentication.verifyToken(accessToken);
+            const customer = await this.customerService.findOneByAccountId(decoded.account_id);
+            cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
         }
+        if (!cart) {
+            throw new NotFoundError(CART_ITEM_NOT_FOUND);
+        }
+        cart = await this.cartService.findOneByCartId(cart.cart_id);
+        return res.status(200).json({ cart });
     }
 
     /* 

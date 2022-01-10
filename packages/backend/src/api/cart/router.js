@@ -13,7 +13,7 @@ export default routerGroup({
         handlers: [cartController.callMethod('getAllCart')],
     }, {
         method: 'GET',
-        path: '/:cartId',
+        path: '/',
         handlers: [cartController.callMethod('getCart')],
     }, {
         method: 'POST',

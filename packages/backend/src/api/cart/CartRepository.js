@@ -17,8 +17,37 @@ class CartRepository extends BaseRepository {
         return this.listByPagingAndSort(pagingAndSort);
     }
 
-    findByCartId(cartId) {
-        return this.getBy({ cart_id: cartId });
+    async findByCartId(cartId, columns = '*') {
+        let subTotalPrice = 0, shippingFee = 0, totalPrice = 0;
+        const cart = await knex('cart').select(columns)
+                        .where({'cart.cart_id': cartId}).first();  
+
+        let lineItems = await knex('cart_items').select(columns)
+                        .where({'cart_items.cart_id': cart.cart_id});
+
+        lineItems = await Promise.all(lineItems.map(async function(lineItem) {
+            let product = await knex('products').select(columns)
+                            .where({'products.product_id': lineItem.product_id}).first();
+            let supplier = await knex('suppliers').select(columns)
+                            .where({'suppliers.supplier_id': product.supplier_id}).first();
+            product.supplier = supplier;
+            delete product.supplier_id;
+
+            lineItem.product = product;
+            delete lineItem.product_id;
+            delete lineItem.cart_id;
+            
+            subTotalPrice += lineItem.quantity * lineItem.price * lineItem.discount / 100;
+            shippingFee += lineItem.ship_fee;
+            return lineItem;
+        }));        
+        totalPrice = subTotalPrice + shippingFee;
+      
+        cart.line_items = lineItems;
+        cart.sub_total_price = subTotalPrice;
+        cart.shipping_fee = shippingFee;
+        cart.total_price = totalPrice;
+        return cart;
     }
 
     deleteOne(cartId) {
@@ -39,10 +68,21 @@ class CartRepository extends BaseRepository {
     }
 
     async findCartItems(cartId, productId, columns = ['*']) {
-        let result = await knex('cart_items').select(columns)
+        let cartItem = await knex('cart_items').select(columns)
             .where({ cart_id: cartId, product_id: productId}).first();
- 
-        return result;
+
+        if(cartItem) {
+            let product = await knex('products').select(columns)
+            .where({'products.product_id': cartItem.product_id}).first();
+            let supplier = await knex('suppliers').select(columns)
+                .where({'suppliers.supplier_id': product.supplier_id}).first();
+            product.supplier = supplier;
+            delete product.supplier_id;
+
+            cartItem.product = product;
+            delete cartItem.product_id;
+        }
+        return cartItem;
     }
 
     async insertCartItem(cartItemBody) {

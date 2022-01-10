@@ -48,7 +48,7 @@ class CartService {
     }
 
     async findOneByCartId(cartId) {
-        const cart = await this.cartRepository.getBy({ cart_id: cartId });
+        const cart = await this.cartRepository.findByCartId(cartId);
         return cart;
     }
 
