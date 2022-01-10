@@ -66,55 +66,56 @@ class CartController extends BaseController {
             + Kiem tra cart bang sessionId
             + Neu cart ton tai thi xoa card cu ---> update cart item
     */
-    async addProductToCart(req, res, next) { 
+    async addProductToCart(req, res) {
         const accessToken = req.signedCookies.access_token;
         const sessionId = req.sessionID;
         let cart;
-        
-        if(!accessToken) {
+
+        if (!accessToken) {
             cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
-            if(!cart) {
-                cart = await this.cartService.addNewCart({session_id: sessionId});
-            } 
+            if (!cart) {
+                cart = await this.cartService.addNewCart({ session_id: sessionId });
+            }
         } else {
             const decoded = await this.authentication.verifyToken(accessToken);
             const customer = await this.customerService.findOneByAccountId(decoded.account_id);
             cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
             // guestCart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
-            
-            if(!cart) {
+
+            if (!cart) {
                 cart = await this.cartService.addNewCart({customer_id: customer.customer_id});
                 // merge guest's cart to customer's cart
                 // this.cartService.mergeGuestCartToCustomerCart(guestCart.cart_id, cart.cart_id);
-            } 
+            }
         }
         await this.cartService.addProductToCart(cart.cart_id, req.body);
-        const updatedCartItem = await this.cartService.findCartItems(cart.cart_id, req.body.product_id);
+        const updatedCartItem = await this.cartService.findCartItems(cart.cart_id,
+            req.body.product_id);
 
         return res.status(201).json({ updatedCartItem });
-    } 
+    }
 
-    async decreaseProductQuantity(req, res, next) {
+    async decreaseProductQuantity(req, res) {
         const accessToken = req.signedCookies.access_token;
         const sessionId = req.sessionID;
         let cart;
-        
-        if(!accessToken) {
+
+        if (!accessToken) {
             cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
-            
         } else {
             const decoded = await this.authentication.verifyToken(accessToken);
             const customer = await this.customerService.findOneByAccountId(decoded.account_id);
             cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
         }
 
-        if(!cart) {
+        if (!cart) {
             throw new NotFoundError(CART_ITEM_NOT_FOUND);
         }
         await this.cartService.decreaseProductQuantity(cart.cart_id, req.body);
-        const updatedCartItem = await this.cartService.findCartItems(cart.cart_id, req.body.product_id);
+        const updatedCartItem = await this.cartService.findCartItems(cart.cart_id,
+            req.body.product_id);
 
-        if(!updatedCartItem) {
+        if (!updatedCartItem) {
             return res.status(200).json({
                 statusCode: 200,
                 message: 'Delete product out of cart completed',
@@ -124,12 +125,12 @@ class CartController extends BaseController {
         return res.status(201).json({ updatedCartItem });
     }
 
-    async deleteCartItem(req, res, next) {
+    async deleteCartItem(req, res) {
         const accessToken = req.signedCookies.access_token;
         const sessionId = req.sessionID;
         let cart;
-        
-        if(!accessToken) {
+
+        if (!accessToken) {
             cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
         } else {
             const decoded = await this.authentication.verifyToken(accessToken);
@@ -137,10 +138,11 @@ class CartController extends BaseController {
             cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
         }
 
-        if(!cart) {
+        if (!cart) {
             throw new NotFoundError(CART_ITEM_NOT_FOUND);
         }
-        const deletedCartItem = await this.cartService.deleteCartItem(cart.cart_id, req.body.product_id);
+        const deletedCartItem = await this.cartService.deleteCartItem(cart.cart_id,
+            req.body.product_id);
 
         return res.status(200).json({
             statusCode: 200,
@@ -158,10 +160,10 @@ class CartController extends BaseController {
 
             const cartUpdate = await this.cartService.updateCart(
                 cartId,
-                cartBody,
+                req.body,
             );
 
-            return res.status(200).json({ updateCart });
+            return res.status(200).json({ cartUpdate });
         } catch (err) {
             next(err);
         }

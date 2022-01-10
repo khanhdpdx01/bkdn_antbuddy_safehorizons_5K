@@ -151,8 +151,13 @@ class AuthController extends BaseController {
 
     async refreshToken(req, res) {
         const accessToken = req.signedCookies.access_token;
+        const { username, password } = req.body;
         if (!accessToken) {
-            throw new Unauthorized(UNAUTHORIZED);
+            if (username && password) {
+                this.login(req, res);
+            } else {
+                throw new Unauthorized(UNAUTHORIZED);
+            }
         }
         const updateToken = await this.authService.refreshAuthTokens(accessToken);
         return res.cookie('access_token', updateToken, {
@@ -190,7 +195,7 @@ class AuthController extends BaseController {
     async sendVerifyEmail(req, res) {
         const { email } = req.body;
         const verifyEmailToken = await this.authentication.generateToken({ email });
-        res.status(403).send();
+        res.status(204).send();
         await Promise.all([
             this.authService.saveTokenVerifyEmail(email, verifyEmailToken),
             this.mailService.sendVerificationEmail(email, verifyEmailToken),

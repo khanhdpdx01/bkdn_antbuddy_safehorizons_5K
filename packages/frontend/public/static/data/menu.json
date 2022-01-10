@@ -1,0 +1,487 @@
+{
+    "menuPrimary": {
+        "menu_1": [
+            {
+                "text": "Home",
+                "url": "/",
+                "extraClass": "menu-item-has-children",
+                "subClass": "sub-menu",
+                "subMenu": [
+                    {
+                        "text": "Marketplace Full Width",
+                        "url": "/"
+                    },
+                    {
+                        "text": "Home Auto Parts",
+                        "url": "/home/auto-part"
+                    },
+                    {
+                        "text": "Home Technology",
+                        "url": "/home/technology"
+                    },
+                    {
+                        "text": "Home Organic",
+                        "url": "/home/organic"
+                    },
+                    {
+                        "text": "Home Marketplace V1",
+                        "url": "/home/market-place"
+                    },
+                    {
+                        "text": "Home Marketplace V2",
+                        "url": "/home/market-place-2"
+                    },
+                    {
+                        "text": "Home Marketplace V3",
+                        "url": "/home/market-place-3"
+                    },
+                    {
+                        "text": "Home Marketplace V4",
+                        "url": "/home/market-place-4"
+                    },
+                    {
+                        "text": "Home Electronic",
+                        "url": "/home/electronic"
+                    },
+                    {
+                        "text": "Home Furniture",
+                        "url": "/home/furniture"
+                    }
+                ]
+            },
+            {
+                "text": "Shop",
+                "url": "/shop",
+                "extraClass": "menu-item-has-children has-mega-menu",
+                "subClass": "sub-menu",
+                "mega": "true",
+                "megaContent": [
+                    {
+                        "heading": "Catalog Pages",
+                        "megaItems": [
+                            {
+                                "text": "Shop Default",
+                                "url": "/shop"
+                            },
+                            {
+                                "text": "Shop Fullwidth",
+                                "url": "/shop/shop-fullwidth"
+                            },
+                            {
+                                "text": "Shop Categories",
+                                "url": "/shop/shop-categories"
+                            },
+                            {
+                                "text": "Shop Sidebar",
+                                "url": "/shop/shop-sidebar"
+                            },
+                            {
+                                "text": "Shop Without Banner",
+                                "url": "/shop/shop-sidebar-without-banner"
+                            },
+                            {
+                                "text": "Shop Carousel",
+                                "url": "/shop/shop-carousel"
+                            }
+                        ]
+                    },
+                    {
+                        "heading": "Product Layout",
+                        "megaItems": [
+                            {
+                                "text": "Default",
+                                "url": "/product/default"
+                            },
+                            {
+                                "text": "Extended",
+                                "url": "/product/extended"
+                            },
+                            {
+                                "text": "Full Content",
+                                "url": "/product/full-content"
+                            },
+                            {
+                                "text": "Boxed",
+                                "url": "/product/boxed"
+                            },
+                            {
+                                "text": "Sidebar",
+                                "url": "/product/sidebar"
+                            },
+                            {
+                                "text": "Fullwidth",
+                                "url": "/product/default"
+                            }
+                        ]
+                    },
+                    {
+                        "heading": "Product Types",
+                        "megaItems": [
+                            {
+                                "text": "Simple",
+                                "url": "/product/default"
+                            },
+                            {
+                                "text": "Images Swatches",
+                                "url": "/product/image-swatches"
+                            },
+                            {
+                                "text": "Countdown",
+                                "url": "/product/countdown"
+                            },
+                            {
+                                "text": "Affiliate",
+                                "url": "/product/affiliate"
+                            },
+                            {
+                                "text": "On sale",
+                                "url": "/product/on-sale"
+                            },
+                            {
+                                "text": "Video Featured",
+                                "url": "/product/video-featured"
+                            },
+                            {
+                                "text": "Grouped",
+                                "url": "/product/groupped"
+                            },
+                            {
+                                "text": "Out Of Stock",
+                                "url": "/product/out-of-stock"
+                            }
+                        ]
+                    },
+                    {
+                        "heading": "Ecomerce Pages",
+                        "megaItems": [
+                            {
+                                "text": "Shopping Cart",
+                                "url": "/account/shopping-cart"
+                            },
+                            {
+                                "text": "Checkout",
+                                "url": "/account/checkout"
+                            },
+                            {
+                                "text": "Whishlist",
+                                "url": "/account/wishlist"
+                            },
+                            {
+                                "text": "Compare",
+                                "url": "/account/compare"
+                            },
+                            {
+                                "text": "Order Tracking",
+                                "url": "/account/order-tracking"
+                            },
+                            {
+                                "text": "My Account",
+                                "url": "/account/login"
+                            },
+                            {
+                                "text": "Login / Register",
+                                "url": "/account/login"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "text": "Pages",
+                "url": "",
+                "extraClass": "menu-item-has-children has-mega-menu",
+                "subClass": "sub-menu",
+                "mega": "true",
+                "megaContent": [
+                    {
+                        "heading": "Basic Page",
+                        "megaItems": [
+                            {
+                                "text": "About Us",
+                                "url": "/page/about-us"
+                            },
+                            {
+                                "text": "Contact",
+                                "url": "/page/contact-us"
+                            },
+                            {
+                                "text": "Faqs",
+                                "url": "/page/faqs"
+                            },
+                            {
+                                "text": "404 Page",
+                                "url": "/page/page-404"
+                            }
+                        ]
+                    },
+                    {
+                        "heading": "Vendor Pages",
+                        "megaItems": [
+                            {
+                                "text": "Become a Vendor",
+                                "url": "/vendor/become-a-vendor"
+                            },
+                            {
+                                "text": "Vendor Store",
+                                "url": "/vendor/vendor-store"
+                            },
+                            {
+                                "text": "Store List",
+                                "url": "/vendor/store-list"
+                            },
+                            {
+                                "text": "Store List 2",
+                                "url": "/vendor/store-list-2"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "text": "Blogs",
+                "url": "/blog",
+                "current": "shop",
+                "extraClass": "menu-item-has-children has-mega-menu",
+                "subClass": "sub-menu",
+                "mega": "true",
+                "megaContent": [
+                    {
+                        "heading": "Blog Layout",
+                        "megaItems": [
+                            {
+                                "text": "Grid",
+                                "url": "/blog"
+                            },
+                            {
+                                "text": "Listing",
+                                "url": "/blog/blog-list"
+                            },
+                            {
+                                "text": "Small Thumb",
+                                "url": "/blog/blog-small-thumbnail"
+                            },
+                            {
+                                "text": "Left Sidebar",
+                                "url": "/blog/blog-left-sidebar"
+                            },
+                            {
+                                "text": "Right Sidebar",
+                                "url": "/blog/blog-right-sidebar"
+                            }
+                        ]
+                    },
+                    {
+                        "heading": "Single Blog",
+                        "megaItems": [
+                            {
+                                "text": "Single 1",
+                                "url": "/post/default"
+                            },
+                            {
+                                "text": "Single 2",
+                                "url": "/post/detail-2"
+                            },
+                            {
+                                "text": "Single 3",
+                                "url": "/post/detail-3"
+                            },
+                            {
+                                "text": "Single 4",
+                                "url": "/post/default"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "product_categories": [
+        {
+            "icon": "icon-star",
+            "text": "Hot Promotions",
+            "url": "/shop"
+        },
+        {
+            "category_id": 1,
+            "icon": "icon-laundry",
+            "category_name": "Consumer Electronic",
+            "url": "/shop",
+            "extraClass": "menu-item-has-children has-mega-menu",
+            "subClass": "sub-menu",
+            "mega": true,
+            "megaContent": [
+                {
+                    "heading": "Electronic",
+                    "megaItems": [
+                        {
+                            "text": "Home Audio & Theathers",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "TV & Videos",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Camera, Photos & Videos",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Cellphones & Accessories",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Headphones",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Videosgames",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Wireless Speakers",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Office Electronic",
+                            "url": "/shop"
+                        }
+                    ]
+                },
+                {
+                    "heading": "Accessories & Parts",
+                    "megaItems": [
+                        {
+                            "text": "Digital Cables",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Audio & Video Cables",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Batteries",
+                            "url": "/shop"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "category_id": 2,
+            "icon": "icon-shirt",
+            "category_name": "Clothing & Apparel",
+            "url": "/shop"
+        },
+        {
+            "category_id": 3,
+            "icon": "icon-lampshade",
+            "category_name": "Home, Garden & Kitchen",
+            "url": "/shop"
+        },
+        {
+            "category_id": 4,
+            "icon": "icon-heart-pulse",
+            "category_name": "Health & Beauty",
+            "url": "/shop"
+        },
+        {
+            "category_id": 5,
+            "icon": "icon-diamond2",
+            "category_name": "Yewelry & Watches",
+            "url": "/shop"
+        },
+        {
+            "category_id": 6,
+            "icon": "icon-desktop",
+            "category_name": "Computer & Technology",
+            "url": "/shop",
+            "extraClass": "menu-item-has-children has-mega-menu",
+            "subClass": "sub-menu",
+            "megaContent": [
+                {
+                    "heading": "Computer & Technologies",
+                    "megaItems": [
+                        {
+                            "text": "Computer & Tablets",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Laptop",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Monitors",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Networking",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Drive & Storages",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Computer Components",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Security & Protection",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Gaming Laptop",
+                            "url": "/shop"
+                        },
+                        {
+                            "text": "Accessories",
+                            "url": "/shop"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "category_id": 7,
+            "icon": "icon-baby-bottle",
+            "category_name": "Babies & Moms",
+            "url": "/shop"
+        },
+        {
+            "category_id": 8,
+            "icon": "icon-baseball",
+            "category_name": "Sport & Outdoor",
+            "url": "/shop"
+        },
+        {
+            "category_id": 9,
+            "icon": "icon-smartphone",
+            "category_name": "Phones & Accessories",
+            "url": "/shop"
+        },
+        {
+            "category_id": 10,
+            "icon": "icon-book2",
+            "category_name": "Books & Office",
+            "url": "/shop"
+        },
+        {
+            "category_id": 11,
+            "icon": "icon-car-siren",
+            "category_name": "Cars & Motocycles",
+            "url": "/shop"
+        },
+        {
+            "category_id": 12,
+            "icon": "icon-wrench",
+            "category_name": "Home Improments",
+            "url": "/shop"
+        },
+        {
+            "category_id": 13,
+            "icon": "icon-tag",
+            "category_name": "Vouchers & Services",
+            "url": "/shop"
+        }
+    ]
+}

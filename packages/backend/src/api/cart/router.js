@@ -31,5 +31,5 @@ export default routerGroup({
         method: 'DELETE',
         path: '/',
         handlers: [cartController.callMethod('deleteCartItem')],
-    }
+    },
 ]);
