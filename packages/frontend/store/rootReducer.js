@@ -8,6 +8,7 @@ import auth from './auth/reducer';
 import wishlist from './wishlist/reducer';
 import category from './category/reducer';
 import role from './role/reducer';
+import admin from './admin/reducer';
 
 export default combineReducers({
     auth,
@@ -19,4 +20,5 @@ export default combineReducers({
     wishlist,
     category,
     role,
+    admin,
 });

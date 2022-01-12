@@ -28,7 +28,19 @@ class OrdersRepository extends BaseRepository {
 
     async findOrderDetails(clauses = {}, columns = '*') {
         const result = await knex('order_details').select(columns)
-                                .where(clauses);
+                            .where(clauses);
+        return result;
+    }
+
+    async findOrderDetailsStatus(clauses = {}, columns = '*') {
+        const result = await knex('order_details_status').select(columns)
+                            .where(clauses);
+        return result;
+    }
+
+    async findOrdersStatus(clauses = {}, columns = '*') {
+        const result = await knex('orders_status').select(columns)
+                            .where(clauses).first();
         return result;
     }
 }

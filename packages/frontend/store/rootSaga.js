@@ -8,6 +8,7 @@ import CompareSaga from './compare/saga';
 import WishlistSaga from './wishlist/saga';
 import CategorySage from './category/saga';
 import RoleSage from './role/saga';
+import AdminSaga from './admin/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -20,5 +21,6 @@ export default function* rootSaga() {
         WishlistSaga(),
         CategorySage(),
         RoleSage(),
+        AdminSaga(),
     ]);
 }

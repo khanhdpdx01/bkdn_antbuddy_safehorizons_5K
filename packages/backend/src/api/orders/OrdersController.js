@@ -33,7 +33,7 @@ class OrderController extends BaseController {
         const orders = await this.orderService.getAllOrders({
             sortBy, limit, page,
         });
-        return res.status(200).json({ orders });
+        return res.status(200).json( orders );
     }
 
     async getOrder(req, res, next) {

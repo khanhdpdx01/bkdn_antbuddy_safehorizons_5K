@@ -37,7 +37,7 @@ class BaseRepository {
   }
 
   countBy(clauses = {}) {
-    return this.cloneQuery().where(clauses).count({ count: '*' });
+    return this.cloneQuery().where(clauses).count({ count: '*' });  
   }
 
   getBy(clauses = {}, columns = ['*']) {

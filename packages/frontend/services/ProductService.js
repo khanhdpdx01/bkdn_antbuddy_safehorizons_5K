@@ -10,7 +10,6 @@ class ProductService {
             const products = await Service.get('/products', { params });
             return products.data;
         } catch (err) {
-            console.log(err);
             return ({ error: JSON.stringify(err) });
         }
     }

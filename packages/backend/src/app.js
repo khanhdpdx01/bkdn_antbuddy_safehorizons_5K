@@ -17,8 +17,8 @@ app.set('trust proxy', 1);
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(cors({ origin: /http:\/\/localhost/ }));
-app.use('*', cors());
+app.use(cors({ origin: /http:\/\/localhost/, credentials: true}));
+app.use('*', cors({ origin: /http:\/\/localhost/, credentials: true}));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser('secret-key-bkdn-nodejs'));
 app.use(express.static(path.join(__dirname, 'public')));
