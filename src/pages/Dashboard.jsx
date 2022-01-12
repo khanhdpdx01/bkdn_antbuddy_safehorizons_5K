@@ -12,7 +12,11 @@ import Table from '../components/table/Table'
 
 import Badge from '../components/badge/Badge'
 
-import statusCards from '../assets/JsonData/status-card-data.json'
+// import statusCards from '../assets/JsonData/status-card-data.json'
+
+import StatictisService from '../services/StatictisService'
+import { Component } from 'react'
+import { connect } from 'react-redux'
 
 const chartOptions = {
     series: [{
@@ -162,85 +166,136 @@ const renderOrderBody = (item, index) => (
     </tr>
 )
 
-const Dashboard = () => {
+class Dashboard extends Component {
+    constructor(props) {
+        super(props);
+        const statusCards = [
+            {
+                "icon": "bx bx-shopping-bag",
+                "count": "0",
+                "title": "Total product"
+            },
+            {
+                "icon": "bx bx-cart",
+                "count": "0",
+                "title": "Total customer"
+            },
+            {
+                "icon": "bx bx-dollar-circle",
+                "count": "0",
+                "title": "Total income"
+            },
+            {
+                "icon": "bx bx-receipt",
+                "count": "0",
+                "title": "Total orders"
+            }
+        ]
+       
+        this.state = {statusCards};
+    }
+    
+    formatCurrency(num) {
+        if (num !== undefined) {
+            return parseFloat(num)
+                .toString()
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+        } else {
+        }
+    }
 
-    const themeReducer = useSelector(state => state.ThemeReducer.mode)
+    async componentWillMount() {
+        const statictis = await StatictisService.statictis();
+        const temp = [...this.state.statusCards];        
+        
+        temp[0].count = statictis.total_products;
+        temp[1].count = statictis.total_customers;
+        temp[2].count = statictis.total_income;
+        temp[3].count = statictis.total_orders;
+        this.setState({statusCards: temp})
+    }
 
-    return (
-        <div>
-            <h2 className="page-header">Dashboard</h2>
-            <div className="row">
-                <div className="col-6">
-                    <div className="row">
-                        {
-                            statusCards.map((item, index) => (
-                                <div className="col-6" key={index}>
-                                    <StatusCard
-                                        icon={item.icon}
-                                        count={item.count}
-                                        title={item.title}
-                                    />
-                                </div>
-                            ))
-                        }
-                    </div>
-                </div>
-                <div className="col-6">
-                    <div className="card full-height">
-                        {/* chart */}
-                        <Chart
-                            options={themeReducer === 'theme-mode-dark' ? {
-                                ...chartOptions.options,
-                                theme: { mode: 'dark'}
-                            } : {
-                                ...chartOptions.options,
-                                theme: { mode: 'light'}
-                            }}
-                            series={chartOptions.series}
-                            type='line'
-                            height='100%'
-                        />
-                    </div>
-                </div>
-                <div className="col-4">
-                    <div className="card">
-                        <div className="card__header">
-                            <h3>top customers</h3>
+    render() {
+        // const themeReducer = useSelector(state => state.ThemeReducer.mode)
+        const themeReducer = this.props.mode;
+       
+        console.log('ABc')
+        return (
+            <div>
+                <h2 className="page-header">Dashboard</h2>
+                <div className="row">
+                    <div className="col-6">
+                        <div className="row">
+                            {
+                                this.state.statusCards.map((item, index) => (
+                                    <div className="col-6" key={index}>
+                                        <StatusCard
+                                            icon={item.icon}
+                                            count={this.formatCurrency(item.count)}
+                                            title={item.title}
+                                        />
+                                    </div>
+                                ))
+                            }
                         </div>
-                        <div className="card__body">
-                            <Table
-                                headData={topCustomers.head}
-                                renderHead={(item, index) => renderCusomerHead(item, index)}
-                                bodyData={topCustomers.body}
-                                renderBody={(item, index) => renderCusomerBody(item, index)}
+                    </div>
+                    <div className="col-6">
+                        <div className="card full-height">
+                            {/* chart */}
+                            <Chart
+                                options={themeReducer === 'theme-mode-dark' ? {
+                                    ...chartOptions.options,
+                                    theme: { mode: 'dark'}
+                                } : {
+                                    ...chartOptions.options,
+                                    theme: { mode: 'light'}
+                                }}
+                                series={chartOptions.series}
+                                type='line'
+                                height='100%'
                             />
                         </div>
-                        <div className="card__footer">
-                            <Link to='/'>view all</Link>
+                    </div>
+                    <div className="col-4">
+                        <div className="card">
+                            <div className="card__header">
+                                <h3>top customers</h3>
+                            </div>
+                            <div className="card__body">
+                                <Table
+                                    headData={topCustomers.head}
+                                    renderHead={(item, index) => renderCusomerHead(item, index)}
+                                    bodyData={topCustomers.body}
+                                    renderBody={(item, index) => renderCusomerBody(item, index)}
+                                />
+                            </div>
+                            <div className="card__footer">
+                                <Link to='/'>view all</Link>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="col-8">
-                    <div className="card">
-                        <div className="card__header">
-                            <h3>latest orders</h3>
-                        </div>
-                        <div className="card__body">
-                            <Table
-                                headData={latestOrders.header}
-                                renderHead={(item, index) => renderOrderHead(item, index)}
-                                bodyData={latestOrders.body}
-                                renderBody={(item, index) => renderOrderBody(item, index)}
-                            />
-                        </div>
-                        <div className="card__footer">
-                            <Link to='/'>view all</Link>
+                    <div className="col-8">
+                        <div className="card">
+                            <div className="card__header">
+                                <h3>latest orders</h3>
+                            </div>
+                            <div className="card__body">
+                                <Table
+                                    headData={latestOrders.header}
+                                    renderHead={(item, index) => renderOrderHead(item, index)}
+                                    bodyData={latestOrders.body}
+                                    renderBody={(item, index) => renderOrderBody(item, index)}
+                                />
+                            </div>
+                            <div className="card__footer">
+                                <Link to='/'>view all</Link>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
-export default Dashboard
+export default connect(state => state.ThemeReducer)(Dashboard)
