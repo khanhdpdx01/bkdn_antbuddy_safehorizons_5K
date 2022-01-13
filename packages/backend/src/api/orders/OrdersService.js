@@ -62,7 +62,7 @@ class OrdersService {
         let subTotalPrice = 0, shippingFee = 0, totalPrice = 0; 
 
         order_details.forEach(function(orderDetail) {
-            subTotalPrice += orderDetail.quantity * orderDetail.price * orderDetail.discount / 100;
+            subTotalPrice += orderDetail.quantity * orderDetail.price * (100 - orderDetail.discount) / 100;
             shippingFee += orderDetail.ship_fee;
         })
         totalPrice = subTotalPrice + shippingFee;
