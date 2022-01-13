@@ -8,6 +8,7 @@ import {
     getCartSuccess,
     updateCartSuccess,
     updateCartError,
+    removeItemSuccess,
 } from './action';
 
 const modalSuccess = (type) => {
@@ -32,7 +33,9 @@ export const calculateAmount = (obj) =>
 
 function* getCartSaga() {
     try {
-        yield put(getCartSuccess());
+        const cartId = JSON.parse(localStorage.getItem('persist:antbuddy')).cart_id;
+        const data = yield call(CartService.getCart, cartId);
+        yield put(getCartSuccess(data));
     } catch (err) {
         yield put(getCartError(err));
     }
@@ -40,94 +43,45 @@ function* getCartSaga() {
 
 function* addItemSaga({ product }) {
     try {
-        // const { product } = payload;
-        // const localCart = JSON.parse(localStorage.getItem('persist:martfury'))
-        //     .cart;
-        // let currentCart = JSON.parse(localCart);
-        // let existItem = currentCart.cartItems.find(
-        //     (item) => item.id === product.id
-        // );
-        // if (existItem) {
-        //     existItem.quantity += product.quantity;
-        // } else {
-        //     if (!product.quantity) {
-        //         product.quantity = 1;
-        //     }
-        //     currentCart.cartItems.push(product);
-        // }
-        // currentCart.amount = calculateAmount(currentCart.cartItems);
-        // currentCart.cartTotal++;
         const data = yield call(CartService.addProductToCart, product);
-        console.log(data)
         yield put(updateCartSuccess(data));
         modalSuccess('success');
     } catch (err) {
+        console.log(err);
         yield put(getCartError(err));
     }
 }
 
-function* removeItemSaga(payload) {
+function* removeItemSaga({ product }) {
     try {
-        const { product } = payload;
-        let localCart = JSON.parse(
-            JSON.parse(localStorage.getItem('persist:martfury')).cart
-        );
-        let index = localCart.cartItems.findIndex(
-            (item) => item.id === product.id
-        );
-        localCart.cartTotal = localCart.cartTotal - product.quantity;
-        localCart.cartItems.splice(index, 1);
-        localCart.amount = calculateAmount(localCart.cartItems);
-        if (localCart.cartItems.length === 0) {
-            localCart.cartItems = [];
-            localCart.amount = 0;
-            localCart.cartTotal = 0;
-        }
-        yield put(updateCartSuccess(localCart));
+        yield call(CartService.deleteProductFromCart, product);
+        yield put(removeItemSuccess(product));
         modalWarning('warning');
     } catch (err) {
         yield put(getCartError(err));
     }
 }
 
-function* increaseQtySaga(payload) {
+function* increaseQtySaga({ product }) {
     try {
-        const { product } = payload;
-        let localCart = JSON.parse(
-            JSON.parse(localStorage.getItem('persist:martfury')).cart
-        );
-        let selectedItem = localCart.cartItems.find(
-            (item) => item.id === product.id
-        );
-        if (selectedItem) {
-            selectedItem.quantity++;
-            localCart.cartTotal++;
-            localCart.amount = calculateAmount(localCart.cartItems);
-        }
-        yield put(updateCartSuccess(localCart));
+        const data = yield call(CartService.addProductToCart, product);
+        yield put(updateCartSuccess(data));
     } catch (err) {
         yield put(getCartError(err));
     }
 }
 
-function* decreaseItemQtySaga(payload) {
+function* decreaseItemQtySaga({ product }) {
     try {
-        const { product } = payload;
-        const localCart = JSON.parse(
-            JSON.parse(localStorage.getItem('persist:martfury')).cart
-        );
-        let selectedItem = localCart.cartItems.find(
-            (item) => item.id === product.id
-        );
-
-        if (selectedItem) {
-            selectedItem.quantity--;
-            localCart.cartTotal--;
-            localCart.amount = calculateAmount(localCart.cartItems);
-        }
-        yield put(updateCartSuccess(localCart));
+        const data = yield call(CartService.descreaseQuantityProduct, product);
+        yield put(updateCartSuccess(data));
     } catch (err) {
         yield put(getCartError(err));
+        notification['warning']({
+            message: 'Decrease A Item',
+            description: "This product shouldn't decrease quantity!",
+            duration: 1,
+        });
     }
 }
 

@@ -7,8 +7,9 @@ import { getColletionBySlug } from '../../../utilities/product-helper';
 class ProductWidgets extends Component{
 
     render() {
-        const { collections, collectionSlug } = this.props;
-        const products = [];
+        // const { collections, collectionSlug } = this.props;
+        // const products = [];
+        const { allProducts } = this.props;
         return (
             <section>
                 <aside className="widget widget_product widget_features">
@@ -46,9 +47,9 @@ class ProductWidgets extends Component{
                 <aside className="widget widget_same-brand">
                     <h3>Same Brand</h3>
                     <div className="widget__content">
-                        {products &&
-                        products.map(product => (
-                            <Product product={product} key={product.id} />
+                        {allProducts &&
+                        allProducts.map((product, index) => (
+                            <Product product={product} key={index} />
                         ))}
                     </div>
                 </aside>
@@ -58,4 +59,4 @@ class ProductWidgets extends Component{
 
 }
 
-export default connect(state=>state.collection)(ProductWidgets);
+export default connect(state=>state.product)(ProductWidgets);

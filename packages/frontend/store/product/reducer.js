@@ -38,7 +38,7 @@ function reducer(state = initialState, action) {
         case actionTypes.GET_PRODUCT_BY_ID_SUCCESS:
             return {
                 ...state,
-                ...{ singleProduct: action.data, productLoading: false },
+                ...{ singleProduct: action.data.product, productLoading: false },
             };
         case actionTypes.GET_PRODUCTS_BY_KEYWORD_SUCCESS:
             return {

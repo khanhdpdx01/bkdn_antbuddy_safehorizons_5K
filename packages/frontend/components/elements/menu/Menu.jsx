@@ -15,7 +15,7 @@ const Menu = ({ data, className }) => (
                 } else {
                     return (
                         <li key={item.categroy_id}>
-                            <Link href={`/product/[pid]`} as={`/product/${item.category_id}`}>
+                            <Link href={{ pathname: 'index', query: { categoryId: item.category_id}}} >
                                 <a>{item.category_name}</a>
                             </Link>
                         </li>

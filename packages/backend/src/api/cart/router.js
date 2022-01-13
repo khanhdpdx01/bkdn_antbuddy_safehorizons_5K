@@ -31,6 +31,6 @@ export default routerGroup({
     }, {
         method: 'DELETE',
         path: '/',
-        handlers: [catchAsync(cartController.callMethod('deleteCartItem'))],
+        handlers: [(cartController.callMethod('deleteCartItem'))],
     },
 ]);

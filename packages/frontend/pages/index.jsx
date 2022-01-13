@@ -29,8 +29,8 @@ class Index extends Component {
         };
     }
 
-    static async getInitialProps(ctx) {
-        return { query: ctx.query };
+    static getInitialProps({ query }) {
+        return { query };
     }
 
     componentDidMount() {
@@ -51,7 +51,9 @@ class Index extends Component {
     }
 
     render() {
+        
         const { subscribe } = this.state;
+        const { query } = this.props;
         return (
             <div className="site-content">
                 <HeaderDefault />
@@ -64,7 +66,7 @@ class Index extends Component {
                     <HomeDefaultDealOfDay collectionSlug="deal_of_the_day" />
                     <HomeAdsColumns />
                     <HomeDefaultTopCategories />
-                    <HomeProducts />
+                    <HomeProducts query={query} />
                     <ConumerElectronics collectionSlug="consumer_electronics" />
                     <Clothings collectionSlug="clothings" />
                     <GardenAndKitchen collectionSlug="garden_and_kitchen" />

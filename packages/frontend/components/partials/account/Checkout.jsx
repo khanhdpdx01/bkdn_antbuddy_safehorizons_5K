@@ -9,16 +9,16 @@ class Checkout extends Component {
     }
 
     render() {
-        const { amount, cartTotal, cartItems } = this.props;
+        const { subTotalPrice, cartTotal, cartItems } = this.props;
         return (
             <div className="ps-checkout ps-section--shopping">
                 <div className="container">
                     <div className="ps-section__header">
-                        <h1>Checkout Information</h1>
+                        <h3>Checkout Information</h3>
                     </div>
                     <div className="ps-section__content">
                         <FormCheckoutInformation
-                            amount={amount}
+                            subTotalPrice={subTotalPrice}
                             cartTotal={cartTotal}
                             cartItems={cartItems}
                         />

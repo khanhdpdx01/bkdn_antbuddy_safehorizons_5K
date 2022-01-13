@@ -8,6 +8,8 @@ import auth from './auth/reducer';
 import wishlist from './wishlist/reducer';
 import category from './category/reducer';
 import role from './role/reducer';
+import order from './order/reducer';
+import payment from './payment/reducer';
 
 export default combineReducers({
     auth,
@@ -19,4 +21,6 @@ export default combineReducers({
     wishlist,
     category,
     role,
+    order,
+    payment,
 });

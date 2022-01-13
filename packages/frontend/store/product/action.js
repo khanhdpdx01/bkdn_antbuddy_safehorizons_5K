@@ -102,10 +102,10 @@ export function getProductsByKeyword(keyword) {
     };
 }
 
-export function getProductsById(id) {
+export function getProductsById(productId) {
     return {
         type: actionTypes.GET_PRODUCT_BY_ID,
-        id,
+        productId,
     };
 }
 

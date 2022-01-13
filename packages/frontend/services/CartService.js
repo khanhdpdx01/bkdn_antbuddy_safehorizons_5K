@@ -14,10 +14,28 @@ class CartService {
         }
     }
 
+    async getCart(cartId) {
+        try {
+            const cart = await Service.get(`/cart/${cartId}`);
+            return cart.data;
+        } catch (err) {
+            return ({ error: JSON.stringify(err) });
+        }
+    }
+
     async descreaseQuantityProduct(product) {
         try {
             const cartItem = await Service.patch('/cart', JSON.stringify(product));
             return cartItem.data;
+        } catch (err) {
+            return ({ error: JSON.stringify(err) });
+        }
+    }
+
+    async deleteProductFromCart(product) {
+        try {
+            const response = await Service.delete('/cart', { data: JSON.stringify(product)});
+            return response.data;
         } catch (err) {
             return ({ error: JSON.stringify(err) });
         }

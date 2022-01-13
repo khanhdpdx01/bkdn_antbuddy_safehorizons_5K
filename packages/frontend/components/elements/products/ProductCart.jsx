@@ -3,19 +3,15 @@ import Link from 'next/link';
 import LazyLoad from 'react-lazyload';
 import { isStaticData } from '../../../utilities/app-settings';
 import { baseUrl } from '../../../repositories/Repository';
-const ProductCart = ({ product }) => {
+const ProductCart = ({ item }) => {
     return (
         <div className="ps-product--cart">
             <div className="ps-product__thumbnail">
-                <Link href="/product/[pid]" as={`/product/${product.id}`}>
+                <Link href="/product/[pid]" as={`/product/${item.product ? item.product.product_id: ''}`}>
                     <a>
                         <LazyLoad>
                             <img
-                                src={
-                                    isStaticData === false
-                                        ? `${baseUrl}${product.thumbnail.url}`
-                                        : product.thumbnail.url
-                                }
+                                src={item.product ? item.product.thumbnail: ''}
                                 alt="martfury"
                             />
                         </LazyLoad>
@@ -23,9 +19,15 @@ const ProductCart = ({ product }) => {
                 </Link>
             </div>
             <div className="ps-product__content">
-                <Link href="/product/[pid]" as={`/product/${product.id}`}>
-                    <a className="ps-product__title">{product.title}</a>
+                <Link href="/product/[pid]" as={`/product/${item.product ? item.product.product_id: ''}`}>
+                    <a className="ps-product__title">{item.product ? item.product.product_name: ''}</a>
                 </Link>
+                <p>
+                    Sold By:
+                    <strong>
+                        {item.product ? item.product.supplier.supplier_name: ''}
+                    </strong>
+                </p>
             </div>
         </div>
     );

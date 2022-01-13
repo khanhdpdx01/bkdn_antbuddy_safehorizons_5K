@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
 import { getCart, removeItem } from '../../../../store/cart/action';
-import { isStaticData } from '../../../../utilities/app-settings';
-import { baseUrl } from '../../../../repositories/Repository';
+import { formatCurrency } from '../../../../utilities/product-helper';
+
 class MiniCart extends Component {
     constructor(props) {
         super(props);
@@ -18,37 +18,30 @@ class MiniCart extends Component {
     };
 
     render() {
-        const { amount, cartTotal, cartItems } = this.props;
+        const { cartTotal, cartItems, subTotalPrice, quantityProduct, totalShipFee } = this.props;
         return (
             <div className="ps-cart--mini">
                 <a className="header__extra" href="#">
                     <i className="icon-bag2"></i>
                     <span>
-                        <i>{cartTotal ? cartTotal : 0}</i>
+                        <i>{quantityProduct ? quantityProduct : 0}</i>
                     </span>
                 </a>
                 {cartItems && cartItems.length > 0 ? (
                     <div className="ps-cart__content">
                         <div className="ps-cart__items">
                             {cartItems && cartItems.length > 0
-                                ? cartItems.map((product) => (
+                                ? cartItems.map((item) => (
                                       <div
                                           className="ps-product--cart-mobile"
-                                          key={product.id}>
+                                          key={item.product ? item.product.product_id: ''}>
                                           <div className="ps-product__thumbnail">
                                               <Link
                                                   href="/product/[pid]"
-                                                  as={`/product/${product.id}`}>
+                                                  as={`/product/${item.product ? item.product.product_id: ''}`}>
                                                   <a>
                                                       <img
-                                                          src={
-                                                              isStaticData ===
-                                                              false
-                                                                  ? `${baseUrl}${product.thumbnail.url}`
-                                                                  : product
-                                                                        .thumbnail
-                                                                        .url
-                                                          }
+                                                          src={item.product ? item.product.thumbnail: ''}
                                                           alt="martfury"
                                                       />
                                                   </a>
@@ -59,35 +52,54 @@ class MiniCart extends Component {
                                                   className="ps-product__remove"
                                                   onClick={this.handleRemoveCartItem.bind(
                                                       this,
-                                                      product
+                                                      item.product
                                                   )}>
                                                   <i className="icon-cross"></i>
                                               </a>
                                               <Link
                                                   href="/product/[pid]"
-                                                  as={`/product/${product.id}`}>
+                                                  as={`/product/${item.product ? item.product.product_id: ''}`}>
                                                   <a className="ps-product__title">
-                                                      {product.title}
+                                                      {item.product ? item.product.product_name: ''}
                                                   </a>
                                               </Link>
                                               <p>
-                                                  <strong>Sold by:</strong>{' '}
-                                                  {product.vendor}
+                                                <strong>Sold by:{' '}</strong>
+                                                  {item.product ? (item.product.supplier ? item.product.supplier.supplier_name: ''): ''}
                                               </p>
-                                              <small>
-                                                  {product.quantity} x $
-                                                  {product.price}
-                                              </small>
+                                                {item.discount ? (
+                                                    <small>
+                                                        {item.quantity} x ₫
+                                                        {formatCurrency(item.product.price*1000 - item.discount * item.price * 1000/100)}
+                                                        <del className="ml-2">
+                                                            {item.discount ?
+                                                            formatCurrency(item.price * 1000) : 0}
+                                                        </del>
+                                                    </small>
+                                                ) : (
+                                                    <small>
+                                                        {item.quantity} x ₫
+                                                        {formatCurrency(item.product ? item.product.price * 1000 : 0)}
+                                                    </small>
+                                                )}
                                           </div>
                                       </div>
                                   ))
                                 : ''}
                         </div>
                         <div className="ps-cart__footer">
-                            <h3>
-                                Sub Total:
-                                <strong>${amount ? amount : 0}</strong>
-                            </h3>
+                            <div>
+                                Total Ship Fee: 
+                                <strong>₫{totalShipFee ? formatCurrency(totalShipFee*1000) : 0}</strong>
+                            </div>
+                            <div>
+                                Sub Total price: 
+                                <strong>₫{subTotalPrice ? formatCurrency(subTotalPrice*1000) : 0}</strong>
+                            </div>
+                            <p>
+                                Cart Total price: 
+                                <strong>₫{ cartTotal ? formatCurrency(cartTotal*1000): 0 }</strong>
+                            </p>
                             <figure>
                                 <Link href="/account/shopping-cart">
                                     <a className="ps-btn">View Cart</a>

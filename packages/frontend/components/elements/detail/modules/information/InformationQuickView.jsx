@@ -15,14 +15,17 @@ class InformationQuickView extends Component {
     handleAddItemToCart = e => {
         e.preventDefault();
         const { product } = this.props;
-        let tempProduct = product;
-        tempProduct.quantity = this.state.quantity;
-        this.props.dispatch(addItem(product));
+        this.props.dispatch(addItem({
+            product_id: product.product_id,
+            quantity: this.state.quantity,
+        }));
     };
 
     handleIncreaseItemQty = e => {
         e.preventDefault();
-        this.setState({ quantity: this.state.quantity + 1 });
+        if (this.props.product.quantity > this.state.quantity) {
+            this.setState({ quantity: this.state.quantity + 1 });
+        }
     };
 
     handleDecreaseItemQty = e => {
@@ -36,7 +39,7 @@ class InformationQuickView extends Component {
         const { product } = this.props;
         return (
             <div className="ps-product__info">
-                <h1>{product.title}</h1>
+                <h1>{product.product_name}</h1>
                 <div className="ps-product__meta">
                     <p>
                         Brand:
@@ -49,9 +52,9 @@ class InformationQuickView extends Component {
                         <span>(1 review)</span>
                     </div>
                 </div>
-                {product.is_sale === true ? (
+                {product.discount ? (
                     <h4 className="ps-product__price sale">
-                        ${product.price} <del>${product.sale_price}</del>
+                        ${product.price} <del>${product.discount*product.price/100}</del>
                     </h4>
                 ) : (
                     <h4 className="ps-product__price">${product.price}</h4>

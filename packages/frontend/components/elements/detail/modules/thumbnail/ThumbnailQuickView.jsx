@@ -40,10 +40,10 @@ class ThumbnailQuickView extends Component {
                         <Slider
                             {...gallerySetting}
                             className="ps-product__gallery ps-carousel inside">
-                            {product.images.map((variant) => (
-                                <div className="item" key={variant.id}>
-                                    <a href={variant.url}>
-                                        <ThumbnailImage url={variant.url} />
+                            {product.images.map((variant, index) => (
+                                <div className="item" key={index}>
+                                    <a href={variant}>
+                                        <ThumbnailImage url={variant} />
                                     </a>
                                 </div>
                             ))}

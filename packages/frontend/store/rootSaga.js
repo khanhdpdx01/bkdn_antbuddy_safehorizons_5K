@@ -8,6 +8,8 @@ import CompareSaga from './compare/saga';
 import WishlistSaga from './wishlist/saga';
 import CategorySage from './category/saga';
 import RoleSage from './role/saga';
+import OrderSaga from './order/saga';
+import PaymentSaga from './payment/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -20,5 +22,7 @@ export default function* rootSaga() {
         WishlistSaga(),
         CategorySage(),
         RoleSage(),
+        OrderSaga(),
+        PaymentSaga(),
     ]);
 }

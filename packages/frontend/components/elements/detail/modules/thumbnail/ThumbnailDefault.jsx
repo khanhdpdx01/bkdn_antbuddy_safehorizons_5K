@@ -3,9 +3,8 @@ import Slider from 'react-slick';
 import NextArrow from '../../../carousel/NextArrow';
 import PrevArrow from '../../../carousel/PrevArrow';
 import Lightbox from 'react-image-lightbox';
-import { baseUrl } from '../../../../../repositories/Repository';
-import { isStaticData } from '../../../../../utilities/app-settings';
 import ThumbnailImage from '../elements/ThumbnailImage';
+
 class ThumbnailDefault extends Component {
     constructor(props) {
         super(props);
@@ -76,15 +75,7 @@ class ThumbnailDefault extends Component {
         };
         const { product } = this.props;
         const { photoIndex, isOpen } = this.state;
-        const productImages = [];
-        product.images.map(variant => {
-            if (isStaticData === false) {
-                productImages.push(`${baseUrl}${variant.url}`);
-            }
-            else {
-                productImages.push(variant.url);
-            }
-        });
+        const productImages = product.images ? product.images : [];
 
         return (
             <div className="ps-product__thumbnail" data-vertical="true">
@@ -95,17 +86,17 @@ class ThumbnailDefault extends Component {
                             ref={slider => (this.slider1 = slider)}
                             asNavFor={this.state.variantCarousel}
                             className="ps-product__gallery ps-carousel inside">
-                            {product.images.map((variant, index) => (
-                                <div className="item" key={variant.id}>
+                            {product.images ? product.images.map((variant, index) => (
+                                <div className="item" key={index}>
                                     <a
                                         href="#"
                                         onClick={e =>
                                             this.handleOpenLightbox(e, index)
                                         }>
-                                        <ThumbnailImage url={variant.url} />
+                                        <ThumbnailImage url={variant} />
                                     </a>
                                 </div>
-                            ))}
+                            )): ''}
                         </Slider>
                     </div>
                 </figure>
@@ -119,11 +110,11 @@ class ThumbnailDefault extends Component {
                     focusOnSelect={true}
                     {...variantSetting}
                     className="ps-product__variants">
-                    {product.images.map(variant => (
-                        <div className="item" key={variant.id}>
-                            <ThumbnailImage url={variant.url} />
+                    {product.images ? product.images.map((variant, index) => (
+                        <div className="item" key={index}>
+                            <ThumbnailImage url={variant} />
                         </div>
-                    ))}
+                    )): ''}
                 </Slider>
                 {isOpen && (
                     <Lightbox

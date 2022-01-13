@@ -23,13 +23,12 @@ class ProductDefaultPage extends React.Component {
         return { query: ctx.query };
     }
     componentDidMount() {
-        const { pid } = this.props.query;
-        const { query } = this.props;
+        const { pid, categoryId } = this.props.query;
         if (isNaN(pid)) {
             Router.push('/page/page-404');
         }
 
-        if (query) {
+        if (pid) {
             const collectionsParams = [
                 'customer_bought',
                 'shop-recommend-items',
@@ -58,7 +57,7 @@ class ProductDefaultPage extends React.Component {
                 url: '/shop',
             },
             {
-                text: singleProduct ? singleProduct.title : '',
+                text: singleProduct ? singleProduct.product_name : '',
             },
         ];
 

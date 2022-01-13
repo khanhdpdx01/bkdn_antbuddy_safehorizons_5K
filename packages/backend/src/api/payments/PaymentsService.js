@@ -1,9 +1,9 @@
-import Repository from './PaymentRepository';
+import Repository from './PaymentsRepository';
 import paginate from '../../utils/paginate';
 
 class PaymentService {
     constructor() {
-        this.paymentsRepository = Repository.getPaymentRepository();
+        this.paymentsRepository = Repository.getPaymentsRepository();
     }
 
     static getPaymentService() {
@@ -43,7 +43,7 @@ class PaymentService {
     async updateProduct(paymentId, paymentBody) {
         const paymentUpdate = await this.paymentsRepository.update(
             { id: paymentId },
-            { paymentBody },
+            paymentBody,
         );
         return paymentUpdate;
     }

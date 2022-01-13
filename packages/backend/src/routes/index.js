@@ -8,7 +8,7 @@ import employeesRouter from '../api/employees/router';
 import categoriesRouter from '../api/categories/router';
 import cartRouter from '../api/cart/router';
 import orderRouter from '../api/orders/router';
-// import paymentRouter from '../api/payments/router';
+import paymentRouter from '../api/payments/router';
 
 export const routes = 
 [
@@ -22,5 +22,5 @@ export const routes =
     ...categoriesRouter,
     ...cartRouter,
     ...orderRouter,
-    // ...paymentRouter,
+    ...paymentRouter,
 ];

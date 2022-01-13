@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getCart } from '../../../store/cart/action';
+import { formatCurrency } from '../../../utilities/product-helper';
 
 import Link from 'next/link';
 
@@ -14,7 +15,7 @@ class Shipping extends Component {
     }
 
     render() {
-        const { amount, cartItems } = this.props;
+        const { cartTotal, cartItems, currentOrderAddress, totalShipFee, subTotalPrice } = this.props;
         return (
             <div className="ps-checkout ps-section--shopping">
                 <div className="container">
@@ -36,8 +37,7 @@ class Shipping extends Component {
                                         <figure>
                                             <small>Ship to</small>
                                             <p>
-                                                2015 South Street, Midland,
-                                                Texas
+                                                {currentOrderAddress}
                                             </p>
                                             <Link href="/account/checkout">
                                                 <a>Change</a>
@@ -50,7 +50,7 @@ class Shipping extends Component {
                                             <small>
                                                 International Shipping
                                             </small>
-                                            <strong>$20.00</strong>
+                                            <strong>₫{ totalShipFee ? formatCurrency(totalShipFee*1000): 0}</strong>
                                         </figure>
                                     </div>
                                     <div className="ps-block__footer">
@@ -80,49 +80,47 @@ class Shipping extends Component {
                                             </figure>
                                             <figure className="ps-block__items">
                                                 {cartItems &&
-                                                    cartItems.map(product => (
-                                                        <Link
-                                                            href="/"
-                                                            key={product.id}>
-                                                            <a>
-                                                                <strong>
-                                                                    {
-                                                                        product.title
-                                                                    }
-                                                                    <span>
+                                                cartItems.map(item => (
+                                                    <Link
+                                                        href="/product/[pid]"
+                                                        as={`/product/${item.product ? item.product.product_id: ''}`}
+                                                        key={item.product ? item.product.product_id: 0}>
+                                                        <a>
+                                                            <strong>
+                                                                {item.product ? item.product.product_name: ''}
+                                                                <span>
                                                                         x
-                                                                        {
-                                                                            product.quantity
-                                                                        }
+                                                                    {
+                                                                        item.quantity
+                                                                    }
                                                                     </span>
-                                                                </strong>
-                                                                <small>
-                                                                    $
-                                                                    {product.quantity *
-                                                                        product.price}
-                                                                </small>
-                                                            </a>
-                                                        </Link>
-                                                    ))}
+                                                            </strong>
+                                                            <small>
+                                                                ₫
+                                                                {item.product ? formatCurrency(item.product.quantity *
+                                                                item.product.price) : 0}
+                                                            </small>
+                                                        </a>
+                                                    </Link>
+                                                ))}
                                             </figure>
                                             <figure>
                                                 <figcaption>
                                                     <strong>Subtotal</strong>
-                                                    <small>${amount}</small>
+                                                    <small>₫{subTotalPrice ? formatCurrency(subTotalPrice*1000): 0}</small>
                                                 </figcaption>
                                             </figure>
                                             <figure>
                                                 <figcaption>
                                                     <strong>Shipping</strong>
-                                                    <small>$20.00</small>
+                                                    <small>₫{ totalShipFee ? formatCurrency(totalShipFee*1000): 0}</small>
                                                 </figcaption>
                                             </figure>
                                             <figure className="ps-block__total">
                                                 <h3>
                                                     Total
                                                     <strong>
-                                                        ${parseInt(amount) + 20}
-                                                        .00
+                                                        ₫{cartTotal ? formatCurrency(cartTotal*1000): 0}
                                                     </strong>
                                                 </h3>
                                             </figure>
@@ -139,6 +137,9 @@ class Shipping extends Component {
 }
 
 const mapStateToProps = state => {
-    return state.cart;
+    return ({
+        ...state.cart,
+        ...state.order,
+    })
 };
 export default connect(mapStateToProps)(Shipping);
