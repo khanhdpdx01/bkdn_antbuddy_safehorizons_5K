@@ -10,7 +10,7 @@ import {
 class PaymentsController extends BaseController {
     constructor() {
         super();
-        this.paymentsService = Service.getPaymentsService();
+        this.paymentsService = Service.getPaymentService();
     }
 
     static getPaymentsController() {
@@ -27,7 +27,7 @@ class PaymentsController extends BaseController {
         const payments = await this.paymentsService.getAllPayments({
             sortBy, limit, page,
         });
-        return res.status(200).json({ payments });
+        return res.status(200).json(payments);
     }
 
     async getPayment(req, res, next) {

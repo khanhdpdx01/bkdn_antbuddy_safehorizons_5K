@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
 import Router from 'next/router';
+import { formatCurrency } from '../../../../utilities/product-helper';
+import { connect } from 'react-redux'; 
+import { updateOrderAddress } from '../../../../store/order/action';
 
 import { Form, Input } from 'antd';
 
@@ -9,12 +12,14 @@ class FormCheckoutInformation extends Component {
         super(props);
     }
 
-    handleLoginSubmit = () => {
+    handleLoginSubmit = (values) => {
+        console.log(values);
+        this.props.dispatch(updateOrderAddress(values.order_adress));
         Router.push('/account/shipping');
     };
 
     render() {
-        const { amount, cartItems, cartTotal } = this.props;
+        const { subTotalPrice, cartItems } = this.props;
         return (
             <Form
                 className="ps-form--checkout"
@@ -23,10 +28,10 @@ class FormCheckoutInformation extends Component {
                     <div className="row">
                         <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
                             <div className="ps-form__billing-info">
-                                <h3 className="ps-form__heading">
+                                {/* <h3 className="ps-form__heading">
                                     Contact information
-                                </h3>
-                                <div className="form-group">
+                                </h3> */}
+                                {/* <div className="form-group">
                                     <Form.Item
                                         label="Name"
                                         name="name"
@@ -43,8 +48,8 @@ class FormCheckoutInformation extends Component {
                                             placeholder="Email or phone number"
                                         />
                                     </Form.Item>
-                                </div>
-                                <div className="form-group">
+                                </div> */}
+                                {/* <div className="form-group">
                                     <div className="ps-checkbox">
                                         <input
                                             className="form-control"
@@ -56,32 +61,32 @@ class FormCheckoutInformation extends Component {
                                             exclusive offers?
                                         </label>
                                     </div>
-                                </div>
+                                </div> */}
                                 <h3 className="ps-form__heading">
                                     Shipping address
                                 </h3>
                                 <div className="row">
-                                    <div className="col-sm-6">
+                                    <div className="col">
                                         <div className="form-group">
                                             <Form.Item
-                                                label="First Name"
-                                                name="firstName"
+                                                label="Order address"
+                                                name="order_adress"
                                                 rules={[
                                                     {
-                                                        required: false,
+                                                        required: true,
                                                         message:
-                                                            'Enter your first name!',
+                                                            'Enter your adress recive order!',
                                                     },
                                                 ]}>
                                                 <Input
                                                     className="form-control"
                                                     type="text"
-                                                    placeholder="First Name"
+                                                    placeholder="order address"
                                                 />
                                             </Form.Item>
                                         </div>
                                     </div>
-                                    <div className="col-sm-6">
+                                    {/* <div className="col-sm-6">
                                         <div className="form-group">
                                             <Form.Item
                                                 label="Last Name"
@@ -100,9 +105,9 @@ class FormCheckoutInformation extends Component {
                                                 />
                                             </Form.Item>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
-                                <div className="form-group">
+                                {/* <div className="form-group">
                                     <Form.Item
                                         name="address"
                                         rules={[
@@ -117,8 +122,8 @@ class FormCheckoutInformation extends Component {
                                             placeholder="Address"
                                         />
                                     </Form.Item>
-                                </div>
-                                <div className="form-group">
+                                </div> */}
+                                {/* <div className="form-group">
                                     <Form.Item
                                         name="apartment"
                                         rules={[
@@ -134,8 +139,8 @@ class FormCheckoutInformation extends Component {
                                             placeholder="Apartment, suite, etc. (optional)"
                                         />
                                     </Form.Item>
-                                </div>
-                                <div className="row">
+                                </div> */}
+                                {/* <div className="row">
                                     <div className="col-sm-6">
                                         <div className="form-group">
                                             <Form.Item
@@ -173,7 +178,7 @@ class FormCheckoutInformation extends Component {
                                             </Form.Item>
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className="form-group">
                                     <div className="ps-checkbox">
                                         <input
@@ -214,24 +219,25 @@ class FormCheckoutInformation extends Component {
                                         </figure>
                                         <figure className="ps-block__items">
                                             {cartItems &&
-                                            cartItems.map(product => (
+                                            cartItems.map(item => (
                                                 <Link
-                                                    href="/"
-                                                    key={product.id}>
+                                                    href="/product/[pid]"
+                                                    as={`/product/${item.product ? item.product.product_id: ''}`}
+                                                    key={item.product ? item.product.product_id: 0}>
                                                     <a>
                                                         <strong>
-                                                            {product.title}
+                                                            {item.product ? item.product.product_name: ''}
                                                             <span>
                                                                     x
                                                                 {
-                                                                    product.quantity
+                                                                    item.quantity
                                                                 }
                                                                 </span>
                                                         </strong>
                                                         <small>
-                                                            $
-                                                            {product.quantity *
-                                                            product.price}
+                                                            ₫
+                                                            {item.product ? formatCurrency(item.product.quantity *
+                                                            item.product.price) : 0}
                                                         </small>
                                                     </a>
                                                 </Link>
@@ -240,7 +246,7 @@ class FormCheckoutInformation extends Component {
                                         <figure>
                                             <figcaption>
                                                 <strong>Subtotal</strong>
-                                                <small>${amount}</small>
+                                                <small>₫{subTotalPrice ? formatCurrency(subTotalPrice): 0}</small>
                                             </figcaption>
                                         </figure>
                                         <figure className="ps-block__shipping">
@@ -258,4 +264,7 @@ class FormCheckoutInformation extends Component {
     }
 }
 
-export default FormCheckoutInformation;
+export default connect(state => ({
+    ...state.cart,
+    ...state.order,
+}))(FormCheckoutInformation);

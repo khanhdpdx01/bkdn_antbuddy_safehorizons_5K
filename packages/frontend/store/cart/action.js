@@ -8,6 +8,7 @@ export const actionTypes = {
 
     ADD_ITEM: 'ADD_ITEM',
     REMOVE_ITEM: 'REMOVE_ITEM',
+    REMOVE_ITEM_SUCCESS: 'REMOVE_ITEM_SUCCESS',
 
     CLEAR_CART: 'CLEAR_CART',
     CLEAR_CART_SUCCESS: 'CLEAR_CART_SUCCESS',
@@ -28,9 +29,10 @@ export function getCart() {
     return { type: actionTypes.GET_CART };
 }
 
-export function getCartSuccess() {
+export function getCartSuccess(payload) {
     return {
         type: actionTypes.GET_CART_SUCCESS,
+        payload,
     };
 }
 
@@ -69,4 +71,11 @@ export function updateCartError(payload) {
         type: actionTypes.UPDATE_CART_ERROR,
         payload,
     };
+}
+
+export function removeItemSuccess(payload) {
+    return {
+        type: actionTypes.REMOVE_ITEM_SUCCESS,
+        payload,
+    }
 }

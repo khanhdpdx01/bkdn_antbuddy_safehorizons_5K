@@ -1,13 +1,15 @@
 import BaseController from '../../infrastructure/Controllers/BaseController';
 import Authentication from '../../common/guards/authentication';
 import CustomersService from '../customers/CustomersService';
-import ProductService from '../products/ProductsService'
+import ProductService from '../products/ProductsService';
 import Service from './OrdersService';
 import {
     NotFoundError,
+    Unauthorized,
 } from '../../errors/index';
 import {
     ORDER_NOT_FOUND,
+    UNAUTHORIZED,
 } from '../../constants/HttpMessage';
 
 class OrderController extends BaseController {
@@ -45,36 +47,43 @@ class OrderController extends BaseController {
         return res.status(200).json({ order });
     }
 
-
     /*
         Tien trinh mua hang:
             Chon hang them vao gio hang
             ---> Tien hanh dat hang
-            ---> Dien thong tin nhu dia chi dat hang, lua chon hinh thuc thanh toan, lua chon don vi van chuyen, hinh thuc van chuyen
-            ---> Xac nhan dat hang 
+            ---> Dien thong tin nhu dia chi dat hang, lua chon hinh thuc thanh toan, 
+                lua chon don vi van chuyen, hinh thuc van chuyen
+            ---> Xac nhan dat hang
             ---> Don hang chuyen sang trang thai cho dong goi
         Truong hop: khi khach hang chua dang nhap va tien hanh order
-            + Chuyen den trang dang nhap 
+            + Chuyen den trang dang nhap
             + Tao order va order-details
         Truong hop: khach hang da dang nhap va tien hanh order
             + Tao order va order-details
      */
     async createOrder(req, res, next) {
-        const accessToken = req.signedCookies.access_token;
-        const decoded = await this.authentication.verifyToken(accessToken);
-        const customer = await this.customerService.findOneByAccountId(decoded.account_id);
-        const newOrder = await this.orderService.addNewOrder(customer.customer_id, req.body);
-        res.status(201).json({ newOrder });
-        
-        newOrder.line_items.forEach(async function(lineItem) {
-            let product = await ProductService.getProductsService().findOneByProductId(lineItem.product_id);
-            ProductService.getProductsService().updateProduct(
-                lineItem.product_id,
-                { quantity: product.quantity - lineItem.quantity}
-            );
-        })
+        try {
+            const accessToken = req.signedCookies.access_token;
+            if (!accessToken) {
+                throw new Unauthorized(UNAUTHORIZED);
+            }
+            const decoded = await this.authentication.verifyToken(accessToken);
+            const customer = await this.customerService.findOneByAccountId(decoded.account_id);
+            const newOrder = await this.orderService.addNewOrder(customer.customer_id, req.body);
+            res.status(201).json({ newOrder });
+
+            newOrder.line_items.forEach(async (lineItem) => {
+                const product = await ProductService.getProductsService()
+                    .findOneByProductId(lineItem.product_id);
+                ProductService.getProductsService().updateProduct(
+                    lineItem.product_id,
+                    { quantity: product.quantity - lineItem.quantity },
+                );
+            });
+        } catch (err) {
+            next(err);
+        }
     }
-    
 
     async updateOrder(req, res, next) {
         try {
@@ -100,7 +109,7 @@ class OrderController extends BaseController {
                 },
             );
 
-            return res.status(200).json({ updateOrder });
+            return res.status(200).json({ orderUpdate });
         } catch (err) {
             next(err);
         }

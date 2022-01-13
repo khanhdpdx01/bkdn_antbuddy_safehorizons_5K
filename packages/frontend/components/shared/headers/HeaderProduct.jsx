@@ -7,8 +7,7 @@ import MenuCategories from './modules/MenuCategories';
 import SearchHeader from './modules/SearchHeader';
 import { addItem } from '../../../store/cart/action';
 import { stickyHeader } from '../../../utilities/common-helpers';
-import { isStaticData } from '../../../utilities/app-settings';
-import { baseUrl } from '../../../repositories/Repository';
+import { formatCurrency } from '../../../utilities/product-helper';
 
 class HeaderProduct extends Component {
     constructor(props) {
@@ -88,11 +87,7 @@ class HeaderProduct extends Component {
                         <article className="ps-product--header-sticky">
                             <div className="ps-product__thumbnail">
                                 <img
-                                    src={
-                                        isStaticData === false
-                                            ? `${baseUrl}${singleProduct.thumbnail.url}`
-                                            : singleProduct.thumbnail.url
-                                    }
+                                    src={singleProduct.thumbnail}
                                     alt="martfury"
                                 />
                             </div>
@@ -100,23 +95,23 @@ class HeaderProduct extends Component {
                                 <div className="ps-product__content">
                                     <Link
                                         href="/product/[pid]"
-                                        as={`/product/${singleProduct.id}`}>
+                                        as={`/product/${singleProduct.product_id}`}>
                                         <a className="ps-product__title">
-                                            {singleProduct.title}
+                                            {singleProduct.product_name}
                                         </a>
                                     </Link>
                                 </div>
                                 <div className="ps-product__shopping">
-                                    {singleProduct.sale === true ? (
+                                    {singleProduct.discount ? (
                                         <span className="ps-product__price">
-                                            <span>${singleProduct.price}</span>
+                                            <span>₫{singleProduct.price ? formatCurrency(singleProduct.price*1000): 0}</span>
                                             <del>
-                                                ${singleProduct.salePrice}
+                                                ₫{singleProduct.discount ? formatCurrency(singleProduct.price*singleProduct.discount*1000/100): 0}
                                             </del>
                                         </span>
                                     ) : (
                                         <span className="ps-product__price">
-                                            <span>${singleProduct.price}</span>
+                                            <span>${singleProduct.price ? formatCurrency(singleProduct.price*1000): 0}</span>
                                         </span>
                                     )}
                                     <a

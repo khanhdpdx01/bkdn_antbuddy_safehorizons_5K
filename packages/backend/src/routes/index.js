@@ -10,6 +10,7 @@ import cartRouter from '../api/cart/router';
 import orderRouter from '../api/orders/router';
 import statictisRouter from '../api/statictis/router';
 // import paymentRouter from '../api/payments/router';
+import paymentRouter from '../api/payments/router';
 
 export const routes = 
 [
@@ -23,6 +24,7 @@ export const routes =
     ...categoriesRouter,
     ...cartRouter,
     ...orderRouter,
-    ...statictisRouter
+    ...statictisRouter,
     // ...paymentRouter,
+    ...paymentRouter,
 ];

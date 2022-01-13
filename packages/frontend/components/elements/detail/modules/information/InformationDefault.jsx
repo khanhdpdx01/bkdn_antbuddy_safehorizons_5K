@@ -5,6 +5,7 @@ import Rating from '../../../Rating';
 import { addItem } from '../../../../../store/cart/action';
 import { addItemToCompare } from '../../../../../store/compare/action';
 import { addItemToWishlist } from '../../../../../store/wishlist/action';
+import { formatCurrency } from '../../../../../utilities/product-helper';
 
 class InformationDefault extends Component {
     constructor(props) {
@@ -17,9 +18,10 @@ class InformationDefault extends Component {
     handleAddItemToCart = e => {
         e.preventDefault();
         const { product } = this.props;
-        let tempProduct = product;
-        tempProduct.quantity = this.state.quantity;
-        this.props.dispatch(addItem(product));
+        this.props.dispatch(addItem({
+            product_id: product.product_id,
+            quantity: this.state.quantity
+        }));
     };
 
     handleAddItemToCompare = e => {
@@ -36,7 +38,10 @@ class InformationDefault extends Component {
 
     handleIncreaseItemQty = e => {
         e.preventDefault();
-        this.setState({ quantity: this.state.quantity + 1 });
+        const { product } = this.props;
+        if (product.quantity > this.state.quantity) {
+            this.setState({ quantity: this.state.quantity + 1 });
+        }
     };
 
     handleDecreaseItemQty = e => {
@@ -50,7 +55,7 @@ class InformationDefault extends Component {
         const { product, currency } = this.props;
         return (
             <div className="ps-product__info">
-                <h1>{product.title}</h1>
+                <h1>{product.product_name}</h1>
                 <div className="ps-product__meta">
                     <p>
                         Brand:
@@ -65,19 +70,21 @@ class InformationDefault extends Component {
                         <span>(1 review)</span>
                     </div>
                 </div>
-                {product.is_sale === true ? (
+                {product.discount ? (
                     <h4 className="ps-product__price sale">
                         <del className="mr-2">
                             {currency ? currency.symbol : '$'}
-                            {product.sale_price}
+                            {product.discount ?
+                                formatCurrency(product.price * 1000) : 0}
                         </del>
                         {currency ? currency.symbol : '$'}
-                        {product.price}
+                        {product.price ? formatCurrency(product.price * 1000
+                            - product.price * product.discount * 1000/100) : 0}
                     </h4>
                 ) : (
                     <h4 className="ps-product__price">
                         {currency ? currency.symbol : '$'}
-                        {product.price}
+                        {product.price ? formatCurrency(product.price*1000): 0}
                     </h4>
                 )}
                 <div className="ps-product__desc">

@@ -19,8 +19,10 @@ class Products extends Component {
     }
 
     componentDidMount() {
+        const { query } = this.props;
         const params = {
             limit: 20,
+            ...query
         }
         this.props.dispatch(getProducts(params));
     }
@@ -100,7 +102,7 @@ class Products extends Component {
                             </li>
                         </ul>
                     </div>
-                    <div class="ps-shopping">
+                    <div className="ps-shopping">
                         <div className="ps-shopping__header">
                             <p>
                                 <strong className="mr-2">{(allProducts && allProducts.length)}</strong>

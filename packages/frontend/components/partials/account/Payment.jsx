@@ -3,6 +3,10 @@ import { connect } from 'react-redux';
 import Link from 'next/link';
 import { Radio, Select } from 'antd';
 import { getCart } from '../../../store/cart/action';
+import { formatCurrency } from '../../../utilities/product-helper';
+import { getPayments } from '../../../store/payment/action';
+import { addOrder } from '../../../store/order/action';
+import Router from 'next/router';
 
 const { Option } = Select;
 
@@ -18,12 +22,38 @@ class Payment extends Component {
         this.setState({ method: e.target.value });
     };
 
+    handleSubmitOrder = e => {
+        const { cartItems } = this.props;
+        const products = cartItems ? cartItems.map(item => ({
+            product_id: item.product.product_id,
+            quantity: item.quantity,
+            price: item.product.price,
+            discount: item.product.discount,
+            order_details_status_id: 1, // enum status to pack product
+        })): [];
+
+        const order = {
+            orders_status_id: 1, // enum status unpaid order
+            payment_id: this.state.method,
+            order_address: this.props.currentOrderAddress,
+            ship_fee: this.props.totalShipFee,
+            line_items: products
+        }
+        this.props.dispatch(addOrder(order));
+        Router.push('/');
+    }
+
     componentDidMount() {
         this.props.dispatch(getCart());
+        const paymentParams = {
+            sortBy: 'payment_id:asc',
+        }
+        this.props.dispatch(getPayments(paymentParams));
     }
 
     render() {
-        const { amount, cartItems } = this.props;
+        const { cartTotal, cartItems, currentOrderAddress,
+            totalShipFee, subTotalPrice, payments } = this.props;
         let month = [],
             year = [];
         for (let i = 1; i <= 12; i++) {
@@ -36,7 +66,7 @@ class Payment extends Component {
             <div className="ps-checkout ps-section--shopping">
                 <div className="container">
                     <div className="ps-section__header">
-                        <h1>Payment</h1>
+                        <h3>Payment</h3>
                     </div>
                     <div className="ps-section__content">
                         <div className="row">
@@ -53,8 +83,7 @@ class Payment extends Component {
                                         <figure>
                                             <small>Ship to</small>
                                             <p>
-                                                2015 South Street, Midland,
-                                                Texas
+                                                {currentOrderAddress}
                                             </p>
                                             <Link href="/account/checkout">
                                                 <a>Change</a>
@@ -67,7 +96,7 @@ class Payment extends Component {
                                             <small>
                                                 International Shipping
                                             </small>
-                                            <strong>$20.00</strong>
+                                            <strong>₫{totalShipFee ? formatCurrency(totalShipFee*1000) : 0}</strong>
                                         </figure>
                                     </div>
                                     <h4>Payment Methods</h4>
@@ -81,14 +110,15 @@ class Payment extends Component {
                                                     )
                                                 }
                                                 value={this.state.method}>
-                                                <Radio value={1}>
-                                                    Visa / Master Card
+                                                {payments ? payments.map(payment => (
+                                                    <Radio value={payment.payment_id}>
+                                                    { payment.payment_name }
                                                 </Radio>
-                                                <Radio value={2}>Paypal</Radio>
+                                                )): ''}
                                             </Radio.Group>
                                         </div>
                                         <div className="ps-block__content">
-                                            {this.state.method === 1 ? (
+                                            {this.state.method !== 1 ? (
                                                 <div className="ps-block__tab">
                                                     <div className="form-group">
                                                         <label>
@@ -182,9 +212,9 @@ class Payment extends Component {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="ps-block__tab">
+                                                <div className="ps-block__tab" onClick={this.handleSubmitOrder.bind(this)}>
                                                     <a className="ps-btn">
-                                                        Process with Paypal
+                                                        Submit
                                                     </a>
                                                 </div>
                                             )}
@@ -213,49 +243,47 @@ class Payment extends Component {
                                             </figure>
                                             <figure className="ps-block__items">
                                                 {cartItems &&
-                                                    cartItems.map(product => (
-                                                        <Link
-                                                            href="/"
-                                                            key={product.id}>
-                                                            <a>
-                                                                <strong>
-                                                                    {
-                                                                        product.title
-                                                                    }
-                                                                    <span>
+                                                cartItems.map(item => (
+                                                    <Link
+                                                        href="/product/[pid]"
+                                                        as={`/product/${item.product ? item.product.product_id: ''}`}
+                                                        key={item.product ? item.product.product_id: 0}>
+                                                        <a>
+                                                            <strong>
+                                                                {item.product ? item.product.product_name: ''}
+                                                                <span>
                                                                         x
-                                                                        {
-                                                                            product.quantity
-                                                                        }
+                                                                    {
+                                                                        item.quantity
+                                                                    }
                                                                     </span>
-                                                                </strong>
-                                                                <small>
-                                                                    $
-                                                                    {product.quantity *
-                                                                        product.price}
-                                                                </small>
-                                                            </a>
-                                                        </Link>
-                                                    ))}
+                                                            </strong>
+                                                            <small>
+                                                                ₫
+                                                                {item.product ? formatCurrency(item.product.quantity *
+                                                                item.product.price) : 0}
+                                                            </small>
+                                                        </a>
+                                                    </Link>
+                                                ))}
                                             </figure>
                                             <figure>
                                                 <figcaption>
                                                     <strong>Subtotal</strong>
-                                                    <small>${amount}</small>
+                                                    <small>₫{subTotalPrice ? formatCurrency(subTotalPrice*1000): 0}</small>
                                                 </figcaption>
                                             </figure>
                                             <figure>
                                                 <figcaption>
                                                     <strong>Shipping</strong>
-                                                    <small>$20.00</small>
+                                                    <small>₫{ totalShipFee ? formatCurrency(totalShipFee*1000): 0}</small>
                                                 </figcaption>
                                             </figure>
                                             <figure className="ps-block__total">
                                                 <h3>
                                                     Total
                                                     <strong>
-                                                        ${parseInt(amount) + 20}
-                                                        .00
+                                                         ₫{cartTotal ? formatCurrency(cartTotal*1000): 0}
                                                     </strong>
                                                 </h3>
                                             </figure>
@@ -272,6 +300,10 @@ class Payment extends Component {
 }
 
 const mapStateToProps = state => {
-    return state.cart;
+    return ({
+        ...state.cart,
+        ...state.order,
+        ...state.payment,
+    })
 };
 export default connect(mapStateToProps)(Payment);

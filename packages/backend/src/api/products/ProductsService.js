@@ -18,10 +18,12 @@ class ProductsService {
         return newProduct;
     }
 
-    async getAllProducts(options) {
+    async getAllProducts(options, categoryId) {
         const pagingAndSort = paginate(options);
-        const countProducts = this.productRepository.count();
-        const products = this.productRepository.findAll(pagingAndSort);
+        const countProducts = categoryId ? this.productRepository
+            .countBy({ category_id: categoryId })
+            : this.productRepository.count();
+        const products = this.productRepository.findAll(pagingAndSort, categoryId);
         return Promise.all([countProducts, products]).then((results) => {
             const [counts, data] = results;
             const totalPages = Math.ceil(counts[0].count / pagingAndSort.limit);

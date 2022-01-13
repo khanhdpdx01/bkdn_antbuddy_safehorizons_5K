@@ -3,11 +3,11 @@ import ProductsRepository from '../products/ProductsRepository';
 import paginate from '../../utils/paginate';
 import {
     BadRequest,
-    NotFoundError
+    NotFoundError,
 } from '../../errors/index';
 import {
     PRODUCT_NOT_ENOUGH,
-    CART_ITEM_NOT_FOUND
+    CART_ITEM_NOT_FOUND,
 } from '../../constants/HttpMessage';
 
 class CartService {
@@ -28,7 +28,6 @@ class CartService {
         newCart = await this.findOneByCartId(newCart[0]);
         return newCart;
     }
-
 
     async getAllCart(options) {
         const pagingAndSort = paginate(options);
@@ -54,7 +53,7 @@ class CartService {
 
     async updateCart(cartId, cartBody) {
         const cartUpdate = await this.cartRepository.update(
-            { cartId: cartId },
+            { cartId },
             { cartBody },
         );
         return cartUpdate;
@@ -66,15 +65,17 @@ class CartService {
     }
 
     async findCartBySessionIdOrCustomerId(sessionIdOrCustomerId) {
-        const result = await this.cartRepository.findCartBySessionIdOrCustomerId(sessionIdOrCustomerId);
+        const result = await this.cartRepository.findCartBySessionIdOrCustomerId(
+            sessionIdOrCustomerId,
+        );
         return result;
     }
 
     async mergeGuestCartToCustomerCart(guestCartId, customerCartId) {
-        await this.cartRepository.updateCartItem({ 
-            cart_id: guestCartId
-        },{ 
-            cart_id: customerCartId
+        await this.cartRepository.updateCartItem({
+            cart_id: guestCartId,
+        }, {
+            cart_id: customerCartId,
         });
 
         await this.cartRepository.deleteOne(guestCartId);
@@ -86,65 +87,58 @@ class CartService {
     }
 
     async addProductToCart(cartId, cartItemBody) {
-        let cartItem = await this.cartRepository.findCartItems(cartId, cartItemBody.product_id);
-        let product = await this.productRepository.getBy({product_id: cartItemBody.product_id});
-        
-        if(cartItemBody.product_id > product.quantity) {
+        const cartItem = await this.cartRepository.findCartItems(cartId, cartItemBody.product_id);
+        const product = await this.productRepository.getBy({ product_id: cartItemBody.product_id });
+
+        if (cartItemBody.product_id > product.quantity) {
             throw new BadRequest(PRODUCT_NOT_ENOUGH);
-        } else {
-            if (!cartItem) {
-            
+        } else if (!cartItem) {
                 await this.cartRepository.insertCartItem({
                     cart_id: cartId,
                     product_id: cartItemBody.product_id,
                     quantity: cartItemBody.quantity,
                     price: product.price,
-                    discount: product.discount 
+                    discount: product.discount,
                 });
-    
             } else {
-              
                 cartItem.quantity += cartItemBody.quantity;
-                await this.cartRepository.updateCartItem({ 
-                    cart_id: cartId, product_id: cartItemBody.product_id 
-                },{ 
+                await this.cartRepository.updateCartItem({
+                    cart_id: cartId, product_id: cartItemBody.product_id,
+                }, {
                     quantity: cartItem.quantity,
                     price: product.price,
-                    discount: product.discount 
+                    discount: product.discount,
                 });
             }
-        }
     }
 
     async decreaseProductQuantity(cartId, cartItemBody) {
-        let cartItem = await this.cartRepository.findCartItems(cartId, cartItemBody.product_id);
-        let quantity;
-
+        const cartItem = await this.cartRepository.findCartItems(cartId, cartItemBody.product_id);
         if (!cartItem) {
             throw new NotFoundError(CART_ITEM_NOT_FOUND);
         }
 
-        quantity = cartItem.quantity - cartItemBody.quantity;
-        if(quantity < 0) {
+        const quantity = cartItem.quantity - cartItemBody.quantity;
+        if (quantity < 0) {
             throw new BadRequest(PRODUCT_NOT_ENOUGH);
-        } else if(quantity > 0) {
-            await this.cartRepository.updateCartItem({ 
-                cart_id: cartId, product_id: cartItemBody.product_id 
-            },{ 
-                quantity: quantity
+        } else if (quantity > 0) {
+            await this.cartRepository.updateCartItem({
+                cart_id: cartId, product_id: cartItemBody.product_id,
+            }, {
+                quantity,
             });
         } else {
             await this.cartRepository.deleteCartItem({
-                cart_id: cartId, 
-                product_id: cartItemBody.product_id
+                cart_id: cartId,
+                product_id: cartItemBody.product_id,
             });
         }
     }
 
     async deleteCartItem(cartId, productId) {
         const result = await this.cartRepository.deleteCartItem({
-            cart_id: cartId, 
-            product_id: productId
+            cart_id: cartId,
+            product_id: productId,
         });
         return result;
     }

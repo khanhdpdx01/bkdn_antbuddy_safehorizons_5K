@@ -7,8 +7,10 @@ import {
 } from '../../errors/index';
 import {
     CART_NOT_FOUND,
-    CART_ITEM_NOT_FOUND
+    CART_ITEM_NOT_FOUND,
 } from '../../constants/HttpMessage';
+
+require('dotenv').config({ path: `${__dirname}/../../.env` });
 
 class CartController extends BaseController {
     constructor() {
@@ -25,6 +27,20 @@ class CartController extends BaseController {
         return CartController.instance;
     }
 
+    mapModifyProduct(product) {
+        if (JSON.parse(product.images) instanceof Array) {
+            const images = JSON.parse(product.images).map((image) => `${process.env.URL_ENDPOINT_API}/products/images/${image}`);
+            return {
+                images,
+                thumbnail: `${process.env.URL_ENDPOINT_API}/products/images/${product.thumbnail}`,
+            };
+        }
+
+        return {
+            thumbnail: `${process.env.URL_ENDPOINT_API}/products/images/${product.thumbnail}`,
+        };
+    }
+
     async getAllCart(req, res) {
         const {
             sortBy, limit, page,
@@ -35,7 +51,7 @@ class CartController extends BaseController {
         return res.status(200).json({ cart });
     }
 
-    async getCart(req, res, next) {
+    async getCart(req, res) {
         const accessToken = req.signedCookies.access_token;
         const sessionId = req.sessionID;
         let cart;
@@ -51,10 +67,18 @@ class CartController extends BaseController {
             throw new NotFoundError(CART_ITEM_NOT_FOUND);
         }
         cart = await this.cartService.findOneByCartId(cart.cart_id);
+        cart.line_items = cart.line_items.map((item) => {
+            const lineItem = item;
+            lineItem.product = {
+                ...item.product,
+                ...this.mapModifyProduct(item.product),
+            };
+            return lineItem;
+        });
         return res.status(200).json({ cart });
     }
 
-    /* 
+    /*
         Truong hop: chua login va gio hang chua ton tai
             + Tao moi gio hang
             + Them cart item
@@ -76,7 +100,6 @@ class CartController extends BaseController {
         const accessToken = req.signedCookies.access_token;
         const sessionId = req.sessionID;
         let cart;
-
         if (!accessToken) {
             cart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
             if (!cart) {
@@ -87,9 +110,11 @@ class CartController extends BaseController {
             const customer = await this.customerService.findOneByAccountId(decoded.account_id);
             cart = await this.cartService.findCartBySessionIdOrCustomerId(customer.customer_id);
             // guestCart = await this.cartService.findCartBySessionIdOrCustomerId(sessionId);
-
             if (!cart) {
-                cart = await this.cartService.addNewCart({customer_id: customer.customer_id});
+                cart = await this.cartService.addNewCart({
+                    customer_id: customer.customer_id,
+                    session_id: sessionId,
+                });
                 // merge guest's cart to customer's cart
                 // this.cartService.mergeGuestCartToCustomerCart(guestCart.cart_id, cart.cart_id);
             }
@@ -97,6 +122,11 @@ class CartController extends BaseController {
         await this.cartService.addProductToCart(cart.cart_id, req.body);
         const updatedCartItem = await this.cartService.findCartItems(cart.cart_id,
             req.body.product_id);
+
+        updatedCartItem.product = {
+            ...updatedCartItem.product,
+            ...this.mapModifyProduct(updatedCartItem.product),
+        };
 
         return res.status(201).json({ updatedCartItem });
     }
@@ -127,6 +157,11 @@ class CartController extends BaseController {
                 message: 'Delete product out of cart completed',
             });
         }
+
+        updatedCartItem.product = {
+            ...updatedCartItem.product,
+            ...this.mapModifyProduct(updatedCartItem.product),
+        };
 
         return res.status(201).json({ updatedCartItem });
     }

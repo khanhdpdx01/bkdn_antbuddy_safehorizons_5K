@@ -1,4 +1,5 @@
 import BaseRepository from '../../infrastructure/Repositories/BaseRepository';
+import knex from '../../config/connection';
 
 class ProductsRepository extends BaseRepository {
     static getProductsRepository() {
@@ -12,7 +13,13 @@ class ProductsRepository extends BaseRepository {
         return 'products';
     }
 
-    findAll(pagingAndSort) {
+    findAll(pagingAndSort, categoryId) {
+        if (categoryId) {
+            return knex(this.getTableName()).select(['*']).where({ category_id: categoryId })
+                .orderBy(pagingAndSort.sort)
+                .limit(pagingAndSort.limit)
+                .offset(pagingAndSort.offset);
+        }
         return this.listByPagingAndSort(pagingAndSort);
     }
 

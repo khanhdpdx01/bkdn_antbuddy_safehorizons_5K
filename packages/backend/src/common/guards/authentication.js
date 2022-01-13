@@ -33,7 +33,7 @@ class Authentication {
 
     verifyToken(token, secret = process.env.JWT_SECRET) {
         try {
-            return jwt.verify(token, secret);
+            return jwt.verify(JSON.parse(token), secret);
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError || err instanceof jwt.JsonWebTokenError) {
                 throw new BadRequest(LOGIN_REQUIRED);

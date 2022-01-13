@@ -8,7 +8,9 @@ import {
 } from '../../../store/cart/action';
 
 import Link from 'next/link';
+import { notification } from 'antd';
 import ProductCart from '../../elements/products/ProductCart';
+import { formatCurrency } from '../../../utilities/product-helper';
 
 class ShoppingCart extends Component {
     constructor(props) {
@@ -19,30 +21,47 @@ class ShoppingCart extends Component {
         this.props.dispatch(getCart());
     }
 
-    handleIncreaseItemQty(product) {
-        this.props.dispatch(increaseItemQty(product));
+    handleIncreaseItemQty(item) {
+        if (item.product.quantity === item.quantity) {
+            notification['warning']({
+                message: 'Warning',
+                description: "This product cannot be increase quantity!",
+                duration: 1,
+            });
+        } else {
+            this.props.dispatch(increaseItemQty({
+                product_id: item.product.product_id,
+                quantity: 1,
+            }));
+        }
     }
 
-    handleDecreaseItemQty(product) {
-        this.props.dispatch(decreaseItemQty(product));
+    handleDecreaseItemQty(item) {
+        if (item.quantity === 1) {
+            notification['warning']({
+                message: 'Warning',
+                description: "the minimum number of products is equal to 1",
+                duration: 1,
+            });
+        } else {
+            this.props.dispatch(decreaseItemQty({
+                product_id: item.product.product_id,
+                quantity: 1,
+            }));
+        }
     }
 
-    handleRemoveCartItem = product => {
-        this.props.dispatch(removeItem(product));
+    handleRemoveCartItem = item => {
+        this.props.dispatch(removeItem({
+            product_id: item.product.product_id,
+        }));
     };
 
     render() {
-        const { amount, cartTotal, cartItems } = this.props;
-        let currentCartItems = [];
-        if (cartItems && cartItems.length > 0) {
-            currentCartItems = cartItems;
-        }
+        const { subTotalPrice, cartTotal, cartItems, totalShipFee } = this.props;
         return (
             <div className="ps-section--shopping ps-shopping-cart">
                 <div className="container">
-                    <div className="ps-section__header">
-                        <h1>Shopping Cart</h1>
-                    </div>
                     <div className="ps-section__content">
                         <div className="table-responsive">
                             <table className="table ps-table--shopping-cart">
@@ -50,58 +69,31 @@ class ShoppingCart extends Component {
                                     <tr>
                                         <th>Product</th>
                                         <th>Price</th>
+                                        <th>Discount</th>
                                         <th>Quantity</th>
                                         <th>Total</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentCartItems.map(product => (
-                                        <tr key={product.id}>
+                                    {cartItems.map(item => (
+                                        <tr key={item.product ? item.product.product_id: ''}>
                                             <td>
-                                                <ProductCart product={product}/>
-                                                {/*<div className="ps-product--cart">
-                                                    <div className="ps-product__thumbnail">
-                                                        <Link
-                                                            href="/product/[pid]"
-                                                            as={`/product/${product.id}`}>
-                                                            <a>
-                                                                <img
-                                                                    src={
-                                                                        product.thumbnail
-                                                                    }
-                                                                    alt="martfury"
-                                                                />
-                                                            </a>
-                                                        </Link>
-                                                    </div>
-                                                    <div className="ps-product__content">
-                                                        <Link
-                                                            href="/product/[pid]"
-                                                            as={`/product/${product.id}`}>
-                                                            <a className="ps-product__title">
-                                                                {product.title}
-                                                            </a>
-                                                        </Link>
-                                                        <p>
-                                                            Sold By:
-                                                            <strong>
-                                                                {product.vendor}
-                                                            </strong>
-                                                        </p>
-                                                    </div>
-                                                </div>*/}
+                                                <ProductCart item={item}/>
                                             </td>
-                                            <td className="price">
-                                                ${product.price}
+                                            <td className="price text-center">
+                                                ₫{item.product ? formatCurrency(item.product.price*1000): 0}
                                             </td>
-                                            <td>
+                                            <td className="text-center">
+                                                {item.discount}%
+                                            </td>
+                                            <td className="text-center">
                                                 <div className="form-group--number">
                                                     <button
                                                         className="up"
                                                         onClick={this.handleIncreaseItemQty.bind(
                                                             this,
-                                                            product
+                                                            item
                                                         )}>
                                                         +
                                                     </button>
@@ -109,7 +101,7 @@ class ShoppingCart extends Component {
                                                         className="down"
                                                         onClick={this.handleDecreaseItemQty.bind(
                                                             this,
-                                                            product
+                                                            item
                                                         )}>
                                                         -
                                                     </button>
@@ -117,22 +109,23 @@ class ShoppingCart extends Component {
                                                         className="form-control"
                                                         type="text"
                                                         placeholder="1"
-                                                        value={product.quantity}
+                                                        value={item.quantity}
                                                         readOnly={true}
                                                     />
                                                 </div>
                                             </td>
-                                            <td>
-                                                $
-                                                {product.quantity *
-                                                    product.price}
+                                            <td className="text-center">
+                                                ₫
+                                                {item.product ? (formatCurrency((item.quantity *
+                                                    item.product.price - item.quantity * item.product.price
+                                                    * item.product.discount / 100) * 1000)) : 0}
                                             </td>
-                                            <td>
+                                            <td className="text-center">
                                                 <a
                                                     href="#"
                                                     onClick={this.handleRemoveCartItem.bind(
                                                         this,
-                                                        product
+                                                        item
                                                     )}>
                                                     <i className="icon-cross"></i>
                                                 </a>
@@ -157,33 +150,34 @@ class ShoppingCart extends Component {
                                 <div className="ps-block--shopping-total">
                                     <div className="ps-block__header">
                                         <p>
-                                            Subtotal <span> ${amount}</span>
+                                            Subtotal <span> ₫{formatCurrency(subTotalPrice*1000)}</span>
                                         </p>
                                     </div>
                                     <div className="ps-block__content">
                                         <ul className="ps-block__product">
                                             {cartItems.length > 0
                                                 ? cartItems.map(
-                                                      (product, index) => {
+                                                      (item, index) => {
                                                           if (index < 3) {
                                                               return (
                                                                   <li
                                                                       key={
-                                                                          product.id
+                                                                          item.product ? item.product.product_id: 0
                                                                       }>
                                                                       <span className="ps-block__estimate">
                                                                           <Link
                                                                               href="/product/[pid]"
-                                                                              as={`/product/${product.id}`}>
+                                                                              as={`/product/${item.product ? item.product.product_id: ''}`}>
                                                                               <a className="ps-product__title">
                                                                                   {
-                                                                                      product.title
+                                                                                      item.product ? item.product.product_name: ''
                                                                                   }
-                                                                                  <br />{' '}
-                                                                                  x{' '}
+                                                                                  <br />
+                                                                                  <strong>
                                                                                   {
-                                                                                      product.quantity
-                                                                                  }
+                                                                                    item.quantity
+                                                                                  }{' '}{ item.product ? item.product.unit:''}
+                                                                                  </strong>
                                                                               </a>
                                                                           </Link>
                                                                       </span>
@@ -194,9 +188,12 @@ class ShoppingCart extends Component {
                                                   )
                                                 : ''}
                                         </ul>
-                                        <h3>
-                                            Total <span>${amount}</span>
-                                        </h3>
+                                        <p>
+                                            Ship Fee: <span>₫{ formatCurrency(totalShipFee*1000) }</span>
+                                        </p>
+                                        <h4>
+                                            Total <span>₫{formatCurrency(cartTotal*1000)}</span>
+                                        </h4>
                                     </div>
                                 </div>
                                 <Link href="/account/checkout">

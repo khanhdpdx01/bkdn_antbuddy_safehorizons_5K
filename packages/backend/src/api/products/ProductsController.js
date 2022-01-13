@@ -44,9 +44,10 @@ class ProductController extends BaseController {
             const {
                 sortBy, limit, page,
             } = req.query;
+            const { categoryId } = req.query;
             const data = await this.productService.getAllProducts({
                 sortBy, limit, page,
-            });
+            }, categoryId);
 
             const responseData = data.products.length > 0
                 ? data.products.map((product) => this.mapModifyProduct(product)) : [];
