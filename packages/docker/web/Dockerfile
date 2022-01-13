@@ -10,7 +10,7 @@ WORKDIR /app
 COPY ./frontend/package*.json ./
 
 # install project dependencies
-RUN npm install --frozen-lockfile
+RUN npm install
 
 FROM node:12.22.5-alpine as builder
 
